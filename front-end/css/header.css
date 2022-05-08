@@ -1,0 +1,17 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+#header{
+    width: 100%;
+    min-width: 1440px;
+    height: 100px;
+}
+
+.logo{
+    position: absolute;
+    height: 80px;
+    left: 30px;
+    top: 10px;
+}
