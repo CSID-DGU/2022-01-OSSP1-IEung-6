@@ -1,0 +1,73 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+#content{
+    position: relative;
+    top: 120px;
+}
+
+table{
+    table-layout: fixed;
+    width: 1200px;
+    height: 600px;
+    margin: 0 auto;
+    border: 3px solid #3A75C4;
+    border-radius: 10px;
+    border-spacing: 0;
+}
+
+th{
+    height: 50px;
+    font-weight: 600;
+    font-size: 25px;
+    border-bottom: 3px solid #3A75C4;
+    border-collapse: collapse;
+    background-color: #DEEBF7;
+}
+
+th:nth-child(1){
+    border-top-left-radius: 8px;
+}
+
+th:nth-child(7){
+    border-top-right-radius: 8px;
+}
+
+th:nth-child(-n + 6){
+    border-right: 1.5px solid #3A75C4;
+}
+
+td:nth-child(-n + 6){
+    border-right: 1.5px solid #3A75C4;
+}
+
+tr:nth-child(n + 1):nth-child(-n + 5) > td{
+    border-bottom: 1.5px solid #3A75C4;
+}
+
+td{
+    padding: 5px;
+    vertical-align: top;
+    font-weight: 500;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.test1{
+    background-color: rgba(255, 1, 1, 0.2);
+}
+
+.test2{
+    background-color: rgba(67, 183, 13, 0.2);
+}
+
+.test3{
+    background-color: rgba(232, 236, 27, 0.2);
+}
+/*
+    초록색: rgba(67, 183, 13, 0.2)
+    노란색: rgba(232, 236, 27, 0.2);
+    빨간색: rgba(255, 1, 1, 0.2)
+*/
