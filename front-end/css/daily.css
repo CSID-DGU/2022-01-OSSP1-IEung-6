@@ -52,12 +52,24 @@ input{
     height: 100px;
     background-color: white;
     border: 1.5px solid #545454;
-    box-shadow: 0px 4px 4px 0px rgba(67, 183, 13, 0.3);
     border-radius: 15px;
 }
+
+.green{
+    box-shadow: 0px 4px 4px 0px rgba(67, 183, 13, 0.3);
+}
+
+.yellow{
+    box-shadow: 0px 4px 4px 0px rgba(232, 236, 27, 0.3);
+}
+
+.red{
+    box-shadow: 0px 4px 4px 0px rgba(255, 1, 1, 0.3);
+}
+
 /*
     초록색: rgba(67, 183, 13, 0.3)
-    노란색: rgba(232, 236, 27, 0.3);
+    노란색: rgba(232, 236, 27, 0.3)
     빨간색: rgba(255, 1, 1, 0.3)
 */
 
