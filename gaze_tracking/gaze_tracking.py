@@ -40,7 +40,6 @@ class GazeTracking(object):
             return False
 
     def _analyze(self):
-        """Detects the face and initialize Eye objects"""
         frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
         faces = self._face_detector(frame)
 
@@ -95,31 +94,24 @@ class GazeTracking(object):
             pupil_left = self.eye_left.pupil.y / (self.eye_left.center[1] * 2 - 10)
             pupil_right = self.eye_right.pupil.y / (self.eye_right.center[1] * 2 - 10)
             return (pupil_left + pupil_right) / 2
-
+    #모서리 쪽 left, right 뜨니까 경계값 다시 설정하기
     def is_right(self):
-        """Returns true if the user is looking to the right"""
         if self.pupils_located:
-            #return self.horizontal_ratio() <= 0.35
-            return self.horizontal_ratio() <= 0.53
+            # return self.horizontal_ratio() <= 0.53
+            return self.horizontal_ratio() <= 0.48
+
                             
     def is_left(self):
-        """Returns true if the user is looking to the left"""
         if self.pupils_located:
-            #return self.horizontal_ratio() >= 0.65
-            return self.horizontal_ratio() >= 0.70
+            # return self.horizontal_ratio() >= 0.70
+            return self.horizontal_ratio() >= 0.77
+
 
 
     def is_center(self):
-        """Returns true if the user is looking to the center"""
         if self.pupils_located:
-            #"""center : 0.6 ~ 0.65"""
             return self.is_right() is not True and self.is_left() is not True
 
-    """ def is_blinking(self):
-        if self.pupils_located:
-            blinking_ratio = (self.eye_left.blinking + self.eye_right.blinking) / 2
-            return blinking_ratio > 3.8
- """
     def annotated_frame(self):
         """Returns the main frame with pupils highlighted"""
         frame = self.frame.copy()
