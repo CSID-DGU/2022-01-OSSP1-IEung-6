@@ -2,7 +2,7 @@
 Demonstration of the GazeTracking library.
 Check the README.md for complete documentation.
 """
-
+import sys #연주
 import cv2
 from gaze_tracking import GazeTracking
 gaze = GazeTracking()
@@ -25,6 +25,13 @@ while True:
         text = "Looking left"
     elif gaze.is_center():
         text = "Looking center"
+
+    # 만약 중앙으로 보는 것으로 인식했다면 결과 stdout에 print and release
+    if text == "Looking center":
+        print("1",end='') # 중앙을 보고 있으면 1 출력
+        sys.stdout.flush()
+        webcam.release()
+        cv2.destroyAllWindows()
 
     cv2.putText(frame, text, (20, 60), cv2.FONT_HERSHEY_DUPLEX, 1.0, (147, 58, 31), 2)
     #cv2.putText(frame, "horizontal : "+str(gaze.horizontal_ratio()), (20, 90), cv2.FONT_HERSHEY_DUPLEX, 1.0, (147, 58, 31), 2)
