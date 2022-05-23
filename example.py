@@ -1,8 +1,11 @@
+import sys #연주
 import cv2
 from numpy import double
 from gaze_tracking import GazeTracking
 import datetime
 import schedule
+
+
 gaze = GazeTracking()
 webcam = cv2.VideoCapture(0)
 frame = webcam.read()
@@ -14,8 +17,14 @@ def show_webcam(gaze, frame):
     _, frame = webcam.read()
     gaze.refresh(frame)
     frame = gaze.annotated_frame()
+    
     if gaze.is_center():
         text = "concentrate"
+    # 만약 중앙으로 보는 것으로 인식했다면 결과 stdout에 print and release   
+        # print("1",end='') # 중앙을 보고 있으면 1 출력
+        # sys.stdout.flush()
+        # webcam.release()
+        # cv2.destroyAllWindows()
     else:
         text="Unconcentrated"
     cv2.putText(frame, text, (20, 60), cv2.FONT_HERSHEY_DUPLEX, 1.0, (147, 58, 31), 2)
@@ -60,3 +69,7 @@ while True:
         break 
 webcam.release()
 cv2.destroyAllWindows()
+
+
+
+
