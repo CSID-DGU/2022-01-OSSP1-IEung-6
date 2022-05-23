@@ -46,7 +46,7 @@ def repeated_by_second01(gaze):
     else:
         print("Unconcentrated")
     
-schedule.every(0.01).seconds.do(repeated_by_second01, gaze) #약 0.1초에 1개씩 출력하도록 스케줄링 (보통 1초에 9~12개)
+schedule.every(0.08).seconds.do(repeated_by_second01, gaze) #약 0.1초에 1개씩 출력하도록 스케줄링 (보통 1초에 9~12개)
 
 def print_time():
     """
