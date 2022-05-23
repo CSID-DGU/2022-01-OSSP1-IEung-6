@@ -5,7 +5,6 @@ from gaze_tracking import GazeTracking
 import datetime
 import schedule
 
-
 gaze = GazeTracking()
 webcam = cv2.VideoCapture(0)
 frame = webcam.read()
@@ -49,15 +48,13 @@ def repeated_by_second01(gaze):
     
 schedule.every(0.01).seconds.do(repeated_by_second01, gaze) #약 0.1초에 1개씩 출력하도록 스케줄링 (보통 1초에 9~12개)
 
-
 def print_time():
     """
     하나의 레포트 시작시간, 종료시간 기록용
     """
     now=datetime.datetime.now()
     print(now)
-
-
+   
 print("시작시간 : ",end="")
 print_time()
 while True:
@@ -69,7 +66,3 @@ while True:
         break 
 webcam.release()
 cv2.destroyAllWindows()
-
-
-
-

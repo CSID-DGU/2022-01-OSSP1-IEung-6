@@ -24,7 +24,7 @@
     top: 220px;
 }
 
-.wrapper_btn{
+.wrapper_btn1{
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -34,7 +34,7 @@
     height: 150px;
 }
 
-button{
+.wrapper_btn1 button{
     font-weight: 700;
     font-size: 30px;
     line-height: 36px;
@@ -48,3 +48,25 @@ button{
     color: #3A75C4;
 }
 
+.wrapper_btn2{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    position: absolute;
+    left: 180px;
+    top: 580px;
+    width: 150px;
+    height: 110px;
+}
+
+.wrapper_btn2 button{
+    width: 90px;
+    height: 40px;
+    color: white;
+    font-weight: 700;
+    font-size: 25px;
+    border: none;
+    border-radius: 20px;
+    background-color: #75AADB;
+    cursor: pointer;
+}
