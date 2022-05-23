@@ -8,9 +8,7 @@ from .calibration import Calibration
 
 class GazeTracking(object):
     """
-    This class tracks the user's gaze.
-    It provides useful information like the position of the eyes
-    and pupils and allows to know if the eyes are open or closed
+    사용자 시선추적 클래스 (눈, 동공의 좌표 감지)
     """
 
     def __init__(self):
@@ -19,17 +17,17 @@ class GazeTracking(object):
         self.eye_right = None
         self.calibration = Calibration()
 
-        # _face_detector is used to detect faces
+        # 얼굴 감지를 위해 _face_detector 사용
         self._face_detector = dlib.get_frontal_face_detector()
 
-        # _predictor is used to get facial landmarks of a given face
+        # 주어진 랜드마크를 얻기 위해 _predictor 사용
         cwd = os.path.abspath(os.path.dirname(__file__))
         model_path = os.path.abspath(os.path.join(cwd, "trained_models/shape_predictor_68_face_landmarks.dat"))
         self._predictor = dlib.shape_predictor(model_path)
 
     @property
     def pupils_located(self):
-        """Check that the pupils have been located"""
+        """동공의 위치 확인"""
         try:
             int(self.eye_left.pupil.x)
             int(self.eye_left.pupil.y)
@@ -53,69 +51,57 @@ class GazeTracking(object):
             self.eye_right = None
 
     def refresh(self, frame):
-        """Refreshes the frame and analyzes it.
-
-        Arguments:
-            frame (numpy.ndarray): The frame to analyze
+        """프레임 새로고침 후 분석하기
+        인자값 :
+            frame (numpy.ndarray): 분석할 프레임
         """
         self.frame = frame
         self._analyze()
 
     def pupil_left_coords(self):
-        """Returns the coordinates of the left pupil"""
+        """왼쪽 동공의 좌표값 리턴"""
         if self.pupils_located:
             x = self.eye_left.origin[0] + self.eye_left.pupil.x
             y = self.eye_left.origin[1] + self.eye_left.pupil.y
             return (x, y)
 
     def pupil_right_coords(self):
-        """Returns the coordinates of the right pupil"""
+        """오른쪽 동공의 좌표값 리턴"""
         if self.pupils_located:
             x = self.eye_right.origin[0] + self.eye_right.pupil.x
             y = self.eye_right.origin[1] + self.eye_right.pupil.y
             return (x, y)
 
     def horizontal_ratio(self):
-        """Returns a number between 0.0 and 1.0 that indicates the
-        horizontal direction of the gaze. The extreme right is 0.0,
-        the center is 0.5 and the extreme left is 1.0
+        """
+        0.0 ~ 1.0 사이의 숫자 리턴
+        왼쪽 = 0, 중심 = 0.5, 오른쪽 = 1
+        
         """
         if self.pupils_located:
             pupil_left = self.eye_left.pupil.x / (self.eye_left.center[0] * 2 - 10)
             pupil_right = self.eye_right.pupil.x / (self.eye_right.center[0] * 2 - 10)
             return (pupil_left + pupil_right) / 2
 
-    def vertical_ratio(self):
-        """Returns a number between 0.0 and 1.0 that indicates the
-        vertical direction of the gaze. The extreme top is 0.0,
-        the center is 0.5 and the extreme bottom is 1.0
-        """
-        if self.pupils_located:
-            pupil_left = self.eye_left.pupil.y / (self.eye_left.center[1] * 2 - 10)
-            pupil_right = self.eye_right.pupil.y / (self.eye_right.center[1] * 2 - 10)
-            return (pupil_left + pupil_right) / 2
-    #모서리 쪽 left, right 뜨니까 경계값 다시 설정하기
     def is_right(self):
         if self.pupils_located:
             # return self.horizontal_ratio() <= 0.53
             return self.horizontal_ratio() <= 0.48
-
-                            
+           
     def is_left(self):
         if self.pupils_located:
             # return self.horizontal_ratio() >= 0.70
             return self.horizontal_ratio() >= 0.77
 
-
-
     def is_center(self):
         if self.pupils_located:
-            return self.is_right() is not True and self.is_left() is not True
-
+            # return self.is_right() is not True and self.is_left() is not True
+            return  self.horizontal_ratio() < 0.77 and self.horizontal_ratio() > 0.48
     def annotated_frame(self):
-        """Returns the main frame with pupils highlighted"""
+        """
+        동공이 하이라이트 표시된 메인 프레임 리턴 (십자가 모양)
+        """
         frame = self.frame.copy()
-
         if self.pupils_located:
             color = (0, 255, 0)
             x_left, y_left = self.pupil_left_coords()
