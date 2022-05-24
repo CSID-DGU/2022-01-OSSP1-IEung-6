@@ -56,7 +56,14 @@
     left: 180px;
     top: 580px;
     width: 150px;
+}
+
+.run{
     height: 110px;
+}
+
+.set{
+    height: 160px;
 }
 
 .wrapper_btn2 button{
@@ -69,4 +76,38 @@
     border-radius: 20px;
     background-color: #75AADB;
     cursor: pointer;
+}
+
+.main{
+    position: relative;
+    left: 150px;
+    top: 25px;
+    width: 1000px;
+    height: 800px;
+    margin: 0 auto;
+    border: 3px solid #75AADB;
+}
+
+.wrapper_frame img:nth-child(1){
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    margin-left: -350px;
+    z-index: 10;
+}
+
+.wrapper_frame img:nth-child(2){
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    margin-left: -290px;
+    z-index: 20;
+}
+
+.wrapper_frame img:nth-child(3){
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    margin-left: -225px;
+    z-index: 30;
 }
