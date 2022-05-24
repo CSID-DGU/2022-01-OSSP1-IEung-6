@@ -83,16 +83,6 @@ class GazeTracking(object):
             pupil_right = self.eye_right.pupil.x / (self.eye_right.center[0] * 2 - 10)
             return (pupil_left + pupil_right) / 2
 
-    def is_right(self):
-        if self.pupils_located:
-            # return self.horizontal_ratio() <= 0.53
-            return self.horizontal_ratio() <= 0.48
-           
-    def is_left(self):
-        if self.pupils_located:
-            # return self.horizontal_ratio() >= 0.70
-            return self.horizontal_ratio() >= 0.77
-
     def is_center(self):
         if self.pupils_located:
             # return self.is_right() is not True and self.is_left() is not True
