@@ -21,12 +21,11 @@ def show_webcam(gaze, frame):
         text = "concentrate"
     # 만약 중앙으로 보는 것으로 인식했다면 결과 stdout에 print and release   
         sys.stdout.flush()
-
     else:
         text="Unconcentrated"
     cv2.putText(frame, text, (20, 60), cv2.FONT_HERSHEY_DUPLEX, 1.0, (147, 58, 31), 2)
     cv2.putText(frame, "horizontal : "+str(gaze.horizontal_ratio()), (20, 90), cv2.FONT_HERSHEY_DUPLEX, 1.0, (147, 58, 31), 2)
-    
+
     left_pupil = gaze.pupil_left_coords()
     right_pupil = gaze.pupil_right_coords()
     cv2.putText(frame, "Left pupil:  " + str(left_pupil), (90, 140), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
@@ -55,7 +54,6 @@ def print_time():
     now=datetime.datetime.now()
     print(now)
 
-
 print("시작시간 : ",end="")
 print_time()
 frame_cnt=0
@@ -72,8 +70,8 @@ while True:
         print(frame_cnt)
         print("집중 프레임 수 : ", end="")
         print(concentrate_frame_cnt)
-        print("집중도 (집중 프레임수 / 전체 프레임 수) : ", end="")
-        print(double(concentrate_frame_cnt/frame_cnt))
+        print("집중도(%) : ", end="")
+        print(double(concentrate_frame_cnt/frame_cnt)*100)
         break 
 webcam.release()
 cv2.destroyAllWindows()
