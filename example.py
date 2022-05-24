@@ -20,10 +20,8 @@ def show_webcam(gaze, frame):
     if gaze.is_center():
         text = "concentrate"
     # 만약 중앙으로 보는 것으로 인식했다면 결과 stdout에 print and release   
-        # print("1",end='') # 중앙을 보고 있으면 1 출력
-        # sys.stdout.flush()
-        # webcam.release()
-        # cv2.destroyAllWindows()
+        sys.stdout.flush()
+
     else:
         text="Unconcentrated"
     cv2.putText(frame, text, (20, 60), cv2.FONT_HERSHEY_DUPLEX, 1.0, (147, 58, 31), 2)
@@ -63,6 +61,7 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         print("종료시간 : ", end="")
         print_time()
+        #프레임계산
         break 
 webcam.release()
 cv2.destroyAllWindows()
