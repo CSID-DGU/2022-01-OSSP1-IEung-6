@@ -69,12 +69,10 @@
 .wrapper_btn2 button{
     width: 90px;
     height: 40px;
-    color: white;
     font-weight: 700;
     font-size: 25px;
     border: none;
     border-radius: 20px;
-    background-color: #75AADB;
     cursor: pointer;
 }
 
@@ -110,4 +108,14 @@
     bottom: 0;
     margin-left: -225px;
     z-index: 30;
+}
+
+.btn_on{
+    color: #3A75C4;
+    background-color: #ffffff;
+}
+
+.btn_off{
+    color:#ffffff;
+    background-color: #3A75C4;
 }

@@ -3,6 +3,8 @@
 <head>
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/program.css">
+    <script src="script/jquery-1.10.1.min.js"></script>
+    <script src="script/program.js"></script>
     <meta charset="UTF-8">
     <title>Program Setting</title>
 </head>
@@ -20,17 +22,17 @@
                 <button onclick="location.href='program_run.html'">프로그램 실행</button>
             </div>
             <div class="wrapper_btn2 set">
-                <button>선택1</button>
-                <button>선택2</button>
-                <button>선택3</button>
+                <button class="btn_on">선택1</button>
+                <button class="btn_off">선택2</button>
+                <button class="btn_off">선택3</button>
             </div>
         </div>
         <div class="main">
             <!-- 웹캠 -->
             <div class="wrapper_frame">
                 <img src="img/frame1.png" alt="선택1 프레임">
-                <img src="img/frame2.png" alt="선택2 프레임">
-                <img src="img/frame3.png" alt="선택3 프레임">
+                <img src="img/frame2.png" alt="선택2 프레임" style="display: none;">
+                <img src="img/frame3.png" alt="선택3 프레임" style="display: none;">
             </div>
         </div>
     </div>
