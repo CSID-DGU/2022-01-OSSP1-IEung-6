@@ -5,7 +5,7 @@
 # example + video show (연주+지윤 합침)
 # opencv web stream backend
 import sys
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, redirect, url_for
 import cv2
 from numpy import concatenate, double
 from gaze_tracking import GazeTracking
@@ -63,9 +63,68 @@ def print_time():
     now=datetime.datetime.now()
     print(now)
 
-def gen_frames():
+def startcheck(tmp_concentrate_frame_cnt):
+    """
+    시작 서버용 (일단은 30프레임동안 연속해서 집중으로 뜨면 초기 설정 완료)
+    """
+    global check_sum
+    if tmp_concentrate_frame_cnt == 1: # 집중
+        check_sum+=1
+    else:
+        check_sum=0
+    
+    return check_sum
+    
+
+def gen_frames_set(): # 프로그램 초기 설정
     global frame
     global webcam
+    webcam = cv2.VideoCapture(0)
+    _, frame = webcam.read()
+    schedule.every(0.08).seconds.do(repeated_by_second01, gaze) #약 0.1초에 1개씩 출력하도록 스케줄링 (보통 1초에 9~12개)
+    print("시작시간 : ",end="")
+    print_time()
+    frame_cnt=0
+    concentrate_frame_cnt=0
+    global check_sum # sum이 30 되면 초기 설정 완료 
+    check_sum = 0
+    while True:
+        frame = show_webcam(gaze, frame)
+        schedule.run_pending() #위에서 스케줄링 한 시간마다 수행
+        frame_cnt+=1 # 위 함수 수행할 때마다 프레임증가
+        concentrate_frame_cnt+=tmp_concentrate_frame_cnt #global 변수로 선언한 집중 프레임수 더하기
+        
+        global check30
+        check30 = startcheck(tmp_concentrate_frame_cnt)
+        if check30 == 30: # 초기 설정 완료 -> 화면에 완료 표시 하기
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            puttxt = "Done Setting !!"
+            cv2.putText(frame, puttxt,(60, 250),font, 2, (255, 0, 0), 3)
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            print("종료시간 : ", end="")
+            print_time()
+            print("전체 프레임 수 : ", end="")
+            print(frame_cnt)
+            print("집중 프레임 수 : ", end="")
+            print(concentrate_frame_cnt)
+            print("집중도(%) : ", end="")
+            print(double(concentrate_frame_cnt/frame_cnt)*100)
+            break
+        
+        _, buffer = cv2.imencode('.jpg', frame)
+        frame = buffer.tobytes()
+        yield(b'--frame\r\n' 
+              b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        if check30 == 30:
+            break
+    webcam.release()
+    cv2.destroyAllWindows()
+
+def gen_frames_run(): # 프로그램 실행
+    global frame
+    global webcam
+    webcam = cv2.VideoCapture(0)
     _, frame = webcam.read()
     schedule.every(0.08).seconds.do(repeated_by_second01, gaze) #약 0.1초에 1개씩 출력하도록 스케줄링 (보통 1초에 9~12개)
     print("시작시간 : ",end="")
@@ -77,6 +136,7 @@ def gen_frames():
         schedule.run_pending() #위에서 스케줄링 한 시간마다 수행
         frame_cnt+=1 # 위 함수 수행할 때마다 프레임증가
         concentrate_frame_cnt+=tmp_concentrate_frame_cnt #global 변수로 선언한 집중 프레임수 더하기
+        
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print("종료시간 : ", end="")
             print_time()
@@ -97,11 +157,35 @@ def gen_frames():
 
 @app.route('/') # localhost:5000
 def tomain():
-    return render_template('program_setting.html')
+    return render_template('main.html')
 
-@app.route('/video_show') # returns streaming response
-def video_show():
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/video_show_set') # returns streaming response
+def video_show_set():
+    return Response(gen_frames_set(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/video_show_run') # returns streaming response
+def video_show_run():
+    return Response(gen_frames_run(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/calender')
+def tocalender():
+    return render_template('calender.html')
+
+@app.route('/daily')
+def todaily():
+    return render_template('daily.html')
+
+@app.route('/graph')
+def tograph():
+    return render_template('graph.html')
+
+@app.route('/program_run')
+def torun():
+    return render_template('program_run.html')
+
+@app.route('/program_setting')
+def tosetting():
+    return render_template('program_setting.html')
 
 if __name__ == "__main__": #start Flask server(5000번지)
     app.run(debug=True)

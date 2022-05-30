@@ -8,13 +8,15 @@
 </head>
 <body>
     <div id="header">
+        <button onclick="window.location.href='/'" style="float: left;">
         <img class="logo" src="{{url_for('static', filename='img/logo.png')}}" alt="로고">
+        </button>
     </div>
     <div id="content">
-        <img class="main" src="{{url_for('static', filename='img/main.png')}}" alt="메인">
+        <img class="main" src="{{url_for('static', filename='img/main.jpg')}}" alt="메인">
         <div class="wrapper_btn">
-            <button onclick="location.href='program_setting.html'">프로그램 실행</button>
-            <button onclick="location.href='graph.html'">집중도 레포트</button>
+            <button onclick="window.location.href='/program_setting'">프로그램 실행</button>
+            <button onclick="window.location.href='/graph'">집중도 레포트</button>
         </div>
     </div>
     <div id="footer">
