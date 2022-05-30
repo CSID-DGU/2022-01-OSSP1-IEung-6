@@ -1,0 +1,53 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+#content{
+    display: flex;
+    justify-content: center;
+    position: relative;
+    top: 100px;
+    width: 100%;
+    height: 600px;
+    min-width: 1440px;
+}
+
+.graph{
+    width: 800px;
+    height: 500px;
+    margin: 50px;
+    background-color: bisque;
+}
+
+.text{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 500px;
+    height: 500px;
+    margin: 50px;
+    border-radius: 20px;
+    background-color: #DEEBF7;
+}
+
+.text div{
+    position: relative;
+    top: 20px;
+    color: #5A5A5A;
+    font-weight: 600;
+    font-size: 23px;
+    line-height: 50px;
+}
+
+.text > div > span{
+    color: black;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 80px;
+}
+
+span > span{
+    color: #e5053a;
+}
