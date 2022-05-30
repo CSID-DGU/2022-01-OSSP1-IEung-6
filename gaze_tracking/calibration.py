@@ -5,8 +5,7 @@ from .pupil import Pupil
 
 class Calibration(object):
     """
-    This class calibrates the pupil detection algorithm by finding the
-    best binarization threshold value for the person and the webcam.
+    사람 개인과 웹캠에 대한 최적의 이진화 threshold 값을 찾아 동공 감지 알고리즘 교정
     """
 
     def __init__(self):
@@ -15,14 +14,14 @@ class Calibration(object):
         self.thresholds_right = []
 
     def is_complete(self):
-        """Returns true if the calibration is completed"""
+        """calibration이 끝나면 true 리턴"""
         return len(self.thresholds_left) >= self.nb_frames and len(self.thresholds_right) >= self.nb_frames
 
     def threshold(self, side):
-        """Returns the threshold value for the given eye.
+        """지정된 눈에 대한 threshold값 리턴
 
-        Argument:
-            side: Indicates whether it's the left eye (0) or the right eye (1)
+        인자값:
+            side: 왼쪽 눈(0), 오른쪽 눈(1) 구분자
         """
         if side == 0:
             return int(sum(self.thresholds_left) / len(self.thresholds_left))
@@ -31,11 +30,11 @@ class Calibration(object):
 
     @staticmethod
     def iris_size(frame):
-        """Returns the percentage of space that the iris takes up on
-        the surface of the eye.
+        """
+        눈 표면에서 동공이 차지하는 공간의 백분율을 리턴
 
-        Argument:
-            frame (numpy.ndarray): Binarized iris frame
+        인자값:
+            frame (numpy.ndarray): 이진화된 동공 프레임
         """
         frame = frame[5:-5, 5:-5]
         height, width = frame.shape[:2]
@@ -45,11 +44,11 @@ class Calibration(object):
 
     @staticmethod
     def find_best_threshold(eye_frame):
-        """Calculates the optimal threshold to binarize the
-        frame for the given eye.
+        """
+        주어진 눈에 대한 프레임을 이진화하는 최적의 threshold 값 계산
 
-        Argument:
-            eye_frame (numpy.ndarray): Frame of the eye to be analyzed
+        인자값:
+            eye_frame (numpy.ndarray): 분석할 눈 프레임
         """
         average_iris_size = 0.48
         trials = {}
@@ -62,12 +61,12 @@ class Calibration(object):
         return best_threshold
 
     def evaluate(self, eye_frame, side):
-        """Improves calibration by taking into consideration the
-        given image.
+        """
+        주어진 이미지를 고려하여 calibration 개선
 
-        Arguments:
-            eye_frame (numpy.ndarray): Frame of the eye
-            side: Indicates whether it's the left eye (0) or the right eye (1)
+        인자값:
+            eye_frame (numpy.ndarray): 눈 프레임
+            side: 왼쪽 눈(0), 오른쪽 눈(1) 구분자
         """
         threshold = self.find_best_threshold(eye_frame)
 
