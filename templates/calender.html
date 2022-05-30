@@ -9,8 +9,10 @@
 </head>
 <body>
     <div id="header">
+        <button onclick="window.location.href='/'" style="float: left;">
         <img class="logo" src="{{url_for('static', filename='img/logo.png')}}" alt="로고">
-        <button onclick="location.href='graph.html'">그래프</button>
+        </button>
+        <button onclick="window.location.href='/graph'">그래프</button>
         <div></div>
     </div>
     <div id="navigation">
@@ -28,9 +30,9 @@
             <th>FRI</th>
             <th>SAT</th>
             <tr>
-                <td class="test1" onclick="location.href='daily.html'">1</td>
-                <td class="test2" onclick="location.href='daily.html'">2</td>
-                <td class="test3" onclick="location.href='daily.html'">3</td>
+                <td class="test1" onclick="window.location.href='/daily'">1</td>
+                <td class="test2" onclick="window.location.href='/daily'">2</td>
+                <td class="test3" onclick="window.location.href='/daily'">3</td>
                 <td>4</td>
                 <td>5</td>
                 <td>6</td>
