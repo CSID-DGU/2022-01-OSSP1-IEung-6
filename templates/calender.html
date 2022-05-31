@@ -9,9 +9,9 @@
 </head>
 <body>
     <div id="header">
-        <button onclick="window.location.href='/'" style="float: left;">
-        <img class="logo" src="{{url_for('static', filename='img/logo.png')}}" alt="로고">
-        </button>
+        <a href="/">
+            <img class="logo" src="{{url_for('static', filename='img/logo.png')}}" alt="로고">
+        </a>
         <button onclick="window.location.href='/graph'">그래프</button>
         <div></div>
     </div>
