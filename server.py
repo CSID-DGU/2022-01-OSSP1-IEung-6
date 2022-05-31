@@ -2,7 +2,7 @@
 # opencv web stream backend
 import os # folder & file 관리
 import sys
-from flask import Flask, render_template, Response, url_for
+from flask import Flask, render_template, Response, url_for, redirect
 import cv2
 from numpy import concatenate, double
 from gaze_tracking import GazeTracking
@@ -60,6 +60,7 @@ def repeated_by_second01(gaze): # 여기서 파일에 데이터 쓰면 되겠다
     now=datetime.datetime.now()
     print(now)
     global tmp_concentrate_frame_cnt #집중이면 1, 비집중이면 0
+    global f
     if gaze.is_center():
         print("concentrate")
         tmp_concentrate_frame_cnt=1
@@ -142,7 +143,7 @@ def gen_frames_run(): # 프로그램 실행 + 데이터 파일에 저장 (file n
     historydir = currentdir + "/history" #데이터 파일 넣을 디렉토리
     now = datetime.datetime.now()
     global f
-    f = open(historydir + "/" + now.strftime('%Y-%m-%d') + ".txt", 'w') # ../history/2022-05-31.txt 형태로 생성
+    f = open(historydir + "/" + now.strftime('%Y-%m-%d_%H-%M-%S') + ".txt", 'w') # ../history/2022-05-31.txt 형태로 생성
     # --------------------------------------------파일 만들기--------------------------------------------------
     global frame
     global webcam
@@ -217,11 +218,14 @@ def tosetting():
     return render_template('program_setting.html')
 
 @app.route('/program_terminate')
-def toterminate():
+def toPterminate():
     return render_template('program_terminate.html')
 
 @app.route('/terminate', methods=['POST'])
 def letterminate():
+    global f
+    global frame_cnt
+    global concentrate_frame_cnt
     print("종료시간 : ", end="")
     print_time()
     print("전체 프레임 수 : ", end="")
@@ -237,7 +241,7 @@ def letterminate():
     f.close()
     webcam.release()
     cv2.destroyAllWindows()
-    return render_template(url_for('program_terminate'))
+    return redirect(url_for('toPterminate'))
 
-if __name__ == "__main__": #start Flask server(5000번지)
+if __name__ == "__main__": # start Flask server(5000번지)
     app.run(debug=True)
