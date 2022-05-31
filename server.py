@@ -1,11 +1,8 @@
-# window 창 뜨는 거 지워도 되는데 나중에 최종 전에 지워주삼~~
-# 영상 크기 조정 필요함
-
-# ////////////////////////////////////////////////////////////
 # example + video show (연주+지윤 합침)
 # opencv web stream backend
+import os # folder & file 관리
 import sys
-from flask import Flask, render_template, Response, redirect, url_for
+from flask import Flask, render_template, Response, url_for
 import cv2
 from numpy import concatenate, double
 from gaze_tracking import GazeTracking
@@ -42,7 +39,7 @@ def show_webcam(gaze, frame):
     cv2.imshow("Detect Concentration", frame)
     return returnFrame
 
-def repeated_by_second01(gaze):
+def repeated_by_second01_set(gaze): # start check 용
     """
     현재시각과 집중여부 출력
     """
@@ -55,6 +52,26 @@ def repeated_by_second01(gaze):
     else:
         print("Unconcentrated")
         tmp_concentrate_frame_cnt=0
+
+def repeated_by_second01(gaze): # 여기서 파일에 데이터 쓰면 되겠다...! (file write here) ------------- 1
+    """
+    현재시각과 집중여부 출력
+    """
+    now=datetime.datetime.now()
+    print(now)
+    global tmp_concentrate_frame_cnt #집중이면 1, 비집중이면 0
+    if gaze.is_center():
+        print("concentrate")
+        tmp_concentrate_frame_cnt=1
+        # ----------- write data
+        data = now.strftime('%H:%M:%S.%f') + " c\n"
+        f.write(data)
+    else:
+        print("Unconcentrated")
+        tmp_concentrate_frame_cnt=0
+        # ----------- write data
+        data = now.strftime('%H:%M:%S.%f') + " u\n"
+        f.write(data)
 
 def print_time():
     """
@@ -74,14 +91,13 @@ def startcheck(tmp_concentrate_frame_cnt):
         check_sum=0
     
     return check_sum
-    
 
 def gen_frames_set(): # 프로그램 초기 설정
     global frame
     global webcam
     webcam = cv2.VideoCapture(0)
     _, frame = webcam.read()
-    schedule.every(0.08).seconds.do(repeated_by_second01, gaze) #약 0.1초에 1개씩 출력하도록 스케줄링 (보통 1초에 9~12개)
+    schedule.every(0.08).seconds.do(repeated_by_second01_set, gaze) #약 0.1초에 1개씩 출력하도록 스케줄링 (보통 1초에 9~12개)
     print("시작시간 : ",end="")
     print_time()
     frame_cnt=0
@@ -121,7 +137,13 @@ def gen_frames_set(): # 프로그램 초기 설정
     webcam.release()
     cv2.destroyAllWindows()
 
-def gen_frames_run(): # 프로그램 실행
+def gen_frames_run(): # 프로그램 실행 + 데이터 파일에 저장 (file name = date)
+    currentdir = os.getcwd() # 현재 이 파일이 있는 디렉토리 (이 디렉토리의 history folder에 데이터 저장)
+    historydir = currentdir + "/history" #데이터 파일 넣을 디렉토리
+    now = datetime.datetime.now()
+    global f
+    f = open(historydir + "/" + now.strftime('%Y-%m-%d') + ".txt", 'w') # ../history/2022-05-31.txt 형태로 생성
+    # --------------------------------------------파일 만들기--------------------------------------------------
     global frame
     global webcam
     webcam = cv2.VideoCapture(0)
@@ -129,6 +151,8 @@ def gen_frames_run(): # 프로그램 실행
     schedule.every(0.08).seconds.do(repeated_by_second01, gaze) #약 0.1초에 1개씩 출력하도록 스케줄링 (보통 1초에 9~12개)
     print("시작시간 : ",end="")
     print_time()
+    global frame_cnt
+    global concentrate_frame_cnt
     frame_cnt=0
     concentrate_frame_cnt=0
     while True:
@@ -146,6 +170,11 @@ def gen_frames_run(): # 프로그램 실행
             print(concentrate_frame_cnt)
             print("집중도(%) : ", end="")
             print(double(concentrate_frame_cnt/frame_cnt)*100)
+            # ----------- write data (마지막 줄 : 시간 + 집중도%)
+            now = datetime.datetime.now()
+            data = now.strftime('%H:%M:%S.%f') + " " + str(double(concentrate_frame_cnt/frame_cnt)*100)
+            f.write(data)
+            f.close()
             break
         
         _, buffer = cv2.imencode('.jpg', frame)
@@ -186,6 +215,29 @@ def torun():
 @app.route('/program_setting')
 def tosetting():
     return render_template('program_setting.html')
+
+@app.route('/program_terminate')
+def toterminate():
+    return render_template('program_terminate.html')
+
+@app.route('/terminate', methods=['POST'])
+def letterminate():
+    print("종료시간 : ", end="")
+    print_time()
+    print("전체 프레임 수 : ", end="")
+    print(frame_cnt)
+    print("집중 프레임 수 : ", end="")
+    print(concentrate_frame_cnt)
+    print("집중도(%) : ", end="")
+    print(double(concentrate_frame_cnt/frame_cnt)*100)
+    # ----------- write data (마지막 줄 : 시간 + 집중도%)
+    now = datetime.datetime.now()
+    data = now.strftime('%H:%M:%S.%f') + " " + str(double(concentrate_frame_cnt/frame_cnt)*100)
+    f.write(data)
+    f.close()
+    webcam.release()
+    cv2.destroyAllWindows()
+    return render_template(url_for('program_terminate'))
 
 if __name__ == "__main__": #start Flask server(5000번지)
     app.run(debug=True)
