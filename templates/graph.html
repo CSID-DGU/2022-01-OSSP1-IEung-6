@@ -22,7 +22,7 @@
     </div>
     <div id="navigation">
         <img class="left" src="{{url_for('static', filename='img/left.png')}}" alt="이전">
-        <div>5월</div>
+        <div>{{ month }}월</div>
         <img class="right" src="{{url_for('static', filename='img/right.png')}}" alt="다음">
     </div>
     <div id="content">
@@ -31,13 +31,11 @@
         </div>
         <div class="text">
             <div>
-                <span>집중도 80.2%</span><br>
-                월간 프로그램 실행 횟수: 27 회<br>
-                집중도 높은 시간: 시작 후 10분 ~ 20분<br>
-                집중도 낮은 시간: 시작 후 40분 ~ 50분<br>
-                집중도 Best: 5월 16일 월요일<br>
-                집중도 Worst: 5월 20분 금요일<br><br>
-                <span>지난 달 대비 집중도 <span>12% 상승</span></span>
+                <span>집중도 {{ cct }}%</span><br>
+                월간 프로그램 실행 횟수: {{ num }} 회<br>
+                집중도 Best: {{ month }}월 {{ date_b }}일 {{ cct_b }}%<br>
+                집중도 Worst: {{ month }}월 {{ date_w }}일 {{ cct_w }}%<br><br>
+                <span>지난 달 대비 집중도 <span class={{ color }}>{% if sub > 0 %}{{ sub }}% 증가{% else %}{{ -sub }}% 감소{% endif %}</span></span>
             </div>
         </div>
     </div>
