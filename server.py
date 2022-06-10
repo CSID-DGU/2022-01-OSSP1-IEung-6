@@ -238,7 +238,52 @@ def tocalender():
 
 @app.route('/daily')
 def todaily():
-    return render_template('daily.html')
+    # txt 파일 목록 저장
+    currentdir = os.getcwd()
+    historydir = currentdir + "/history"
+    file_list = os.listdir(historydir)
+    # test - 6월 1일 txt 파일
+    daily_file_list = list()
+    # time = list()
+    for i in file_list:
+        if (i[5:7] == '06') and (i[8:10] == '01'): # hard coding 수정
+            daily_file_list.append(i)
+            #time.append(i[11:19])
+    # txt 파일로부터 집중도 읽어오기
+    sum_cct = 0
+    cct_list = list() # 집중도
+    time_list = list() # 실행시간
+    date = '2022 06 01' # hard coding 수정
+    num = len(daily_file_list) # 파일 수
+    for i in daily_file_list:
+        with open(historydir + "/" + i,'r') as f:
+            lastline = f.readlines()[-1]
+            # 실행 시간 계산
+            time_s = list()
+            time_f = list()
+            time_s.append(int(i[11:13])) # index 0 h
+            time_s.append(int(i[14:16])) # index 1 m
+            time_s.append(int(i[17:19])) # index 2 s
+            time_f.append(int(lastline[0:2])) # index 0 h
+            time_f.append(int(lastline[3:5])) # index 1 m
+            time_f.append(int(lastline[6:8]))  # index 2 s
+            start = time_s[0] * 60 * 60 + time_s[1] * 60 + time_s[2]
+            finish = time_f[0] * 60 * 60 + time_f[1] * 60 + time_f[2]
+            time = finish - start
+            time_list.append(time)
+            cct = round(float(lastline.split()[1]), 1) # 집중도
+            cct_list.append(cct)
+            sum_cct += cct
+    result_cct = sum_cct / len(daily_file_list)
+    # 집중도별 색상 지정
+    if result_cct >= 70:
+        color = 'g'
+    elif result_cct >= 30:
+        color = 'y'
+    else:
+        color = 'r'
+    
+    return render_template('daily.html', result_cct = result_cct, cct = cct_list, time = time_list, color = color, date = date, num = num)
 
 @app.route('/graph', methods=['POST'])
 def tograph():
