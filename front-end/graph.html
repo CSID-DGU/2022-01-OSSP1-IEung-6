@@ -1,9 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/date.css">
     <link rel="stylesheet" href="css/graph.css">
+    <link rel="stylesheet" href="https://uicdn.toast.com/chart/latest/toastui-chart.min.css" />
+    <script src="https://uicdn.toast.com/chart/latest/toastui-chart.min.js"></script>
     <meta charset="UTF-8">
     <title>Report - Graph</title>
 </head>
@@ -18,8 +21,12 @@
         <div>5월</div>
         <img class="right" src="img/right.png" alt="다음">
     </div>
+
     <div id="content">
-        <div class="graph"><!-- toast ui 그래프 --></div>
+        <div class="graph">
+            <div id="chart"></div>
+            <!-- toast ui 그래프 -->
+        </div>
         <div class="text">
             <div>
                 <span>집중도 80.2%</span><br>
@@ -32,5 +39,6 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript" src="js/graph.js"></script>
 </body>
 </html>
