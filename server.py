@@ -298,6 +298,7 @@ def tograph():
         if (i[5:7] == '05'): # hard coding 수정
             prev.append(i)
     # 집중도 계산
+    date_list = list()
     sum_cct = 0
     sum_cct_prev = 0
     best_cct = 0
@@ -308,7 +309,12 @@ def tograph():
     num = len(monthly_file_list)
     num_prev = len(prev)
     # 이번 달 집중도 계산
+    temp = ''
     for i in monthly_file_list:
+        if temp == '':
+            date_list.append(i[0:10])
+        elif temp != i[0:10]:
+            date_list.append(i[0:10])
         with open(historydir + "/" + i,'r') as f:
             lastline = f.readlines()[-1]
             cct = round(float(lastline.split()[1]), 1) # 집중도
@@ -319,7 +325,9 @@ def tograph():
         if worst_cct > cct:
             worst_cct = cct
             worst_date = i[8:10]
+        temp = i[0:10]
     result_cct = sum_cct / num
+    result_cct = round(result_cct, 1)
     # 지난 달 집중도 계산
     for i in prev:
         with open(historydir + "/" + i,'r') as f:
@@ -327,12 +335,14 @@ def tograph():
             cct = round(float(lastline.split()[1]), 1) # 집중도
             sum_cct_prev += cct
     prev_cct = sum_cct_prev / num_prev
+    prev_cct = round(prev_cct, 1)
     sub_cct = result_cct - prev_cct
     if sub_cct < 0:
         color = 'b'
     else:
         color = 'r'
-    return render_template('graph.html', month = month, cct = result_cct, num = num, cct_b = best_cct, cct_w = worst_cct, date_b = best_date, date_w = worst_date, sub = sub_cct, color = color)
+    return render_template('graph.html', month = month, cct = result_cct, num = num, cct_b = best_cct, cct_w = worst_cct,
+                           date_b = best_date, date_w = worst_date, sub = sub_cct, color = color, date = date_list)
 
 @app.route('/program_run')
 def torun():
