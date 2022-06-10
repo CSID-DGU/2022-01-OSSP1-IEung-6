@@ -12,7 +12,10 @@
         <a href="/">
             <img class="logo" src="{{url_for('static', filename='img/logo.png')}}" alt="로고">
         </a>
-        <button onclick="window.location.href='/graph'">그래프</button>
+        <form method="POST" action="/graph">
+            <button type="submit">그래프</button> 
+            <!-- POST로 보낸 뒤 서버에서 이동할 페이지로 데이터 보냄( 삭제 onclick="window.location.href='/graph'" ) -->
+        </form>
         <div></div>
     </div>
     <div id="navigation">
