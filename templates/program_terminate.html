@@ -3,10 +3,12 @@
 <head>
     <link rel="stylesheet" href="{{url_for('static', filename='css/header.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/program.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/terminate.css')}}">
     <script src="{{url_for('static', filename='script/jquery-1.10.1.min.js')}}"></script>
     <script src="{{url_for('static', filename='script/program.js')}}"></script>
+    <script src="{{url_for('static', filename='script/terminate.js')}}"></script>
     <meta charset="UTF-8">
-    <title>Program Run</title>
+    <title>Program terminate</title>
 </head>
 <body>
     <div id="header">
@@ -24,14 +26,16 @@
                 <button class="on" onclick="window.location.href='/program_run'">프로그램 실행</button>
             </div>
             <div class="wrapper_btn2 run">
-                    <button class="btn_on" onclick="window.location.href='/program_run'">실행</button>
+                    <button class="btn_off" onclick="window.location.href='/program_run'">실행</button>
                 <form action="/terminate" method="post">
-                    <button class="btn_off">종료</button> <!-- submit button -->
+                    <button class="btn_on">종료</button> <!-- submit button -->
                 </form>
             </div>
         </div>
         <div class="main">
-            <h1>프로그램이 종료 되었습니다.</h1> <!-- 수정해야 함. 임시임 -->
+            <div class="text">데이터 저장 중</div> <!-- 수정해야 함. 임시임 -->
+            <div class="loader loader-2"></div>
+            <div class="create_btn"></div>
         </div>
     </div>
 </body>
