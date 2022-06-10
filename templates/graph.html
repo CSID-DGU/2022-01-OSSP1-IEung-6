@@ -4,6 +4,8 @@
     <link rel="stylesheet" href="{{url_for('static', filename='css/header.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/date.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/graph.css')}}">
+    <link rel="stylesheet" href="https://uicdn.toast.com/chart/latest/toastui-chart.min.css" />
+    <script src="https://uicdn.toast.com/chart/latest/toastui-chart.min.js"></script>
     <meta charset="UTF-8">
     <title>Report - Graph</title>
 </head>
@@ -24,7 +26,9 @@
         <img class="right" src="{{url_for('static', filename='img/right.png')}}" alt="다음">
     </div>
     <div id="content">
-        <div class="graph"><!-- toast ui 그래프 --></div>
+        <div class="graph">
+            <div id="chart"></div>
+        </div>
         <div class="text">
             <div>
                 <span>집중도 80.2%</span><br>
@@ -37,5 +41,6 @@
             </div>
         </div>
     </div>
+    <script src="{{url_for('static', filename='script/graph.js')}}"></script>
 </body>
 </html>
