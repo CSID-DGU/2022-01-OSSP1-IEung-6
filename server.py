@@ -205,6 +205,7 @@ def tocalender():
         current_time=datetime.datetime.now()
         month=current_time.strftime('%m') # 문자열로 월 저장
         session['current_time']=month # session에 지금 월 담음
+        print(session['current_time'])
         
     currentdir = os.getcwd()
     historydir = currentdir + "/history"
@@ -220,7 +221,7 @@ def tocalender():
             with open(historydir + "/" + i,'r') as f:
                 # 파일 읽기
                 lastline = f.readlines()[-1]
-                concen = int(lastline.split()[1])
+                concen = int(float(lastline.split()[1]))
                 cnt[day_index-1]=cnt[day_index-1]+concen # cnt에 정확도 add
                 
     for k in cnt:
@@ -251,8 +252,8 @@ def tograph():
     cntprogram = 0 # 실행 횟수
     conbest = 0 # 집중도 best 날짜(일)
     conworst = 100 # 집중도 worst 날짜(일)
-    conbest_day
-    conworst_day
+    conbest_day = None
+    conworst_day = None
     m = session['current_time'] # session month
     lastmonth = int(m) - 1 # 지난 달
     lastmonth_concen = 0
@@ -267,7 +268,7 @@ def tograph():
             with open(historydir + "/" + i,'r') as f:
                 # 파일 읽기
                 lastline = f.readlines()[-1]
-                concen = int(lastline.split()[1])
+                concen = int(float(lastline.split()[1]))
                 if concen > conbest:
                     conbest = concen # 집중도 best
                     conbest_day = i[8:10]
@@ -285,17 +286,21 @@ def tograph():
             with open(historydir + "/" + i,'r') as f:
                 # 파일 읽기
                 lastline = f.readlines()[-1]
-                concen = int(lastline.split()[1])
+                concen = int(float(lastline.split()[1]))
                 lastmonth_concen += concen
     conavg/=cntprogram # 평균 집중도
-    lastmonth_concen/=lastmonth_cntprogram # 지난 달 평균 집중도
+    if lastmonth_cntprogram == 0: # 0으로 나눌 수 없으니까
+        lastmonth_concen = 0
+    else:
+        lastmonth_concen/=lastmonth_cntprogram # 지난 달 평균 집중도
+    
     month_dif = conavg - lastmonth_concen
     # 일 별 그래프 저장(합친 거에 나누기 해서 일 별 평균 집중도)
     for n in range(len(mday_cnt)):
         if mday_cnt[n] != 0:
             mday[n]/=mday_cnt[n]
              
-    return render_template('graph.html', mday, conavg=conavg, cntprogram=cntprogram, conbest_day=conbest_day, conworst_day=conworst_day, month_dif=month_dif)
+    return render_template('graph.html', mday=mday, conavg=conavg, cntprogram=cntprogram, conbest_day=conbest_day, conworst_day=conworst_day, month_dif=month_dif, )
 
 @app.route('/program_run')
 def torun():
