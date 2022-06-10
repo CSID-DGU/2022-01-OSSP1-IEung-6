@@ -242,13 +242,11 @@ def todaily():
     currentdir = os.getcwd()
     historydir = currentdir + "/history"
     file_list = os.listdir(historydir)
-    # test - 6월 1일 txt 파일
+    # test - 6월 1일 txt 파일 목록 저장
     daily_file_list = list()
-    # time = list()
     for i in file_list:
         if (i[5:7] == '06') and (i[8:10] == '01'): # hard coding 수정
             daily_file_list.append(i)
-            #time.append(i[11:19])
     # txt 파일로부터 집중도 읽어오기
     sum_cct = 0
     cct_list = list() # 집중도
@@ -274,7 +272,7 @@ def todaily():
             cct = round(float(lastline.split()[1]), 1) # 집중도
             cct_list.append(cct)
             sum_cct += cct
-    result_cct = sum_cct / len(daily_file_list)
+    result_cct = sum_cct / num
     # 집중도별 색상 지정
     if result_cct >= 70:
         color = 'g'
@@ -285,67 +283,56 @@ def todaily():
     
     return render_template('daily.html', result_cct = result_cct, cct = cct_list, time = time_list, color = color, date = date, num = num)
 
-@app.route('/graph', methods=['POST'])
+@app.route('/graph')
 def tograph():
-    mday = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-           -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-           -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1] # 집중도 일 별(31개)
-    mday_cnt = [0,0,0,0,0,0,0,0,0,0,
-           0,0,0,0,0,0,0,0,0,0,
-           0,0,0,0,0,0,0,0,0,0,0] # cnt 일 별
-    conavg = 0 # 평균 집중도
-    cntprogram = 0 # 실행 횟수
-    conbest = 0 # 집중도 best 날짜(일)
-    conworst = 100 # 집중도 worst 날짜(일)
-    conbest_day = None
-    conworst_day = None
-    m = session['current_time'] # session month
-    lastmonth = int(m) - 1 # 지난 달
-    lastmonth_concen = 0
-    lastmonth_cntprogram = 0
+    # txt 파일 목록 저장
     currentdir = os.getcwd()
     historydir = currentdir + "/history"
     file_list = os.listdir(historydir)
-    
+    # test - 6월 txt 파일 목록 저장
+    monthly_file_list = list()
+    prev = list()
     for i in file_list:
-        if i[5:7] == m: #지금 달
-            cntprogram+=1 # 실행 횟수 cnt
-            with open(historydir + "/" + i,'r') as f:
-                # 파일 읽기
-                lastline = f.readlines()[-1]
-                concen = int(float(lastline.split()[1]))
-                if concen > conbest:
-                    conbest = concen # 집중도 best
-                    conbest_day = i[8:10]
-                if concen < conworst:
-                    conworst = concen # 집중도 worst
-                    conworst_day = i[8:10]
-                conavg += concen
-                
-                day_index = int(i[8:10])
-                day_index-=1
-                mday[day_index]+=concen
-                mday_cnt[day_index]+=1 # 일 별 cnt +1
-        elif i[5:7] == lastmonth: # 지난 달
-            lastmonth_cntprogram+=1
-            with open(historydir + "/" + i,'r') as f:
-                # 파일 읽기
-                lastline = f.readlines()[-1]
-                concen = int(float(lastline.split()[1]))
-                lastmonth_concen += concen
-    conavg/=cntprogram # 평균 집중도
-    if lastmonth_cntprogram == 0: # 0으로 나눌 수 없으니까
-        lastmonth_concen = 0
+        if (i[5:7] == '06'): # hard coding 수정
+            monthly_file_list.append(i)
+        if (i[5:7] == '05'): # hard coding 수정
+            prev.append(i)
+    # 집중도 계산
+    sum_cct = 0
+    sum_cct_prev = 0
+    best_cct = 0
+    worst_cct = 100
+    best_date = ''
+    worst_date = ''
+    month = '6'
+    num = len(monthly_file_list)
+    num_prev = len(prev)
+    # 이번 달 집중도 계산
+    for i in monthly_file_list:
+        with open(historydir + "/" + i,'r') as f:
+            lastline = f.readlines()[-1]
+            cct = round(float(lastline.split()[1]), 1) # 집중도
+            sum_cct += cct
+        if best_cct < cct:
+            best_cct = cct
+            best_date = i[8:10]
+        if worst_cct > cct:
+            worst_cct = cct
+            worst_date = i[8:10]
+    result_cct = sum_cct / num
+    # 지난 달 집중도 계산
+    for i in prev:
+        with open(historydir + "/" + i,'r') as f:
+            lastline = f.readlines()[-1]
+            cct = round(float(lastline.split()[1]), 1) # 집중도
+            sum_cct_prev += cct
+    prev_cct = sum_cct_prev / num_prev
+    sub_cct = result_cct - prev_cct
+    if sub_cct < 0:
+        color = 'b'
     else:
-        lastmonth_concen/=lastmonth_cntprogram # 지난 달 평균 집중도
-    
-    month_dif = conavg - lastmonth_concen
-    # 일 별 그래프 저장(합친 거에 나누기 해서 일 별 평균 집중도)
-    for n in range(len(mday_cnt)):
-        if mday_cnt[n] != 0:
-            mday[n]/=mday_cnt[n]
-             
-    return render_template('graph.html', mday=mday, conavg=conavg, cntprogram=cntprogram, conbest_day=conbest_day, conworst_day=conworst_day, month_dif=month_dif, )
+        color = 'r'
+    return render_template('graph.html', month = month, cct = result_cct, num = num, cct_b = best_cct, cct_w = worst_cct, date_b = best_date, date_w = worst_date, sub = sub_cct, color = color)
 
 @app.route('/program_run')
 def torun():
