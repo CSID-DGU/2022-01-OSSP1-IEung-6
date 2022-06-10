@@ -2,7 +2,7 @@
 # opencv web stream backend
 import os # folder & file 관리
 import sys
-from flask import Flask, render_template, Response, url_for, redirect
+from flask import Flask, render_template, Response, url_for, redirect, session
 import cv2
 from numpy import concatenate, double
 from gaze_tracking import GazeTracking
@@ -13,6 +13,8 @@ app = Flask(__name__)
 gaze = GazeTracking()
 webcam = cv2.VideoCapture(0)
 text = ""
+
+app.secret_key = 'abcdefg'
 
 def show_webcam(gaze, frame):
     """
@@ -53,7 +55,7 @@ def repeated_by_second01_set(gaze): # start check 용
         print("Unconcentrated")
         tmp_concentrate_frame_cnt=0
 
-def repeated_by_second01(gaze): # 여기서 파일에 데이터 쓰면 되겠다...! (file write here) ------------- 1
+def repeated_by_second01(gaze): # file write here
     """
     현재시각과 집중여부 출력
     """
@@ -197,9 +199,41 @@ def video_show_set():
 def video_show_run():
     return Response(gen_frames_run(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/calender')
+@app.route('/calender', methods=['POST']) # calender로 보낼 정보(월별, 일별로 배열에 담아서..?)
 def tocalender():
-    return render_template('calender.html')
+    if 'month_now' not in session: # session의 정보 비었다면
+        current_time=datetime.datetime.now()
+        month=current_time.strftime('%m') # 문자열로 월 저장
+        session['current_time']=month # session에 지금 월 담음
+        
+    currentdir = os.getcwd()
+    historydir = currentdir + "/history"
+    cnt = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+           -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+           -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1] # 집중도 cnt 31개
+    color=[] # r - red, y - yellow, g - green, n - none
+    file_list = os.listdir(historydir)
+    for i in file_list:
+        if i[5:7] == month: #지금 달
+            day=int(i[8:10])
+            day_index=day-1
+            with open(historydir + "/" + i,'r') as f:
+                # 파일 읽기
+                lastline = f.readlines()[-1]
+                concen = int(lastline.split()[1])
+                cnt[day_index-1]=cnt[day_index-1]+concen # cnt에 정확도 add
+                
+    for k in cnt:
+        if k == -1:
+            color.append('n')
+        elif k >= 0 and k < 30:
+            color.append('r')
+        elif k >= 30 and k < 70:
+            color.append('y')
+        elif k >= 70:
+            color.append('g')
+    
+    return render_template("calender.html", color = color)
 
 @app.route('/daily')
 def todaily():
@@ -241,7 +275,7 @@ def letterminate():
     f.close()
     webcam.release()
     cv2.destroyAllWindows()
-    return redirect(url_for('toPterminate'))
+    return redirect(url_for('toPterminate')) 
 
 if __name__ == "__main__": # start Flask server(5000번지)
     app.run(debug=True)

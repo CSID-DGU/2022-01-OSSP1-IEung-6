@@ -16,7 +16,10 @@
         <img class="main" src="{{url_for('static', filename='img/main.jpg')}}" alt="메인">
         <div class="wrapper_btn">
             <button onclick="window.location.href='/program_setting'">프로그램 실행</button>
-            <button onclick="window.location.href='/graph'">집중도 레포트</button>
+        <form method="POST" action="/calender">
+            <button type="submit">집중도 달력</button> 
+            <!-- POST로 보낸 뒤 서버에서 이동할 페이지로 데이터 보냄( 삭제 onclick="window.location.href='/calender'" ) -->
+        </form>
         </div>
     </div>
     <div id="footer">
