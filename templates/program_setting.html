@@ -8,6 +8,12 @@
     <meta charset="UTF-8">
     <title>Program Setting</title>
 </head>
+<script type="text/javascript">
+    function btnactive(){
+        var btn = document.getElementById('runbtn');
+        btn.disabled = false;
+    }
+</script>
 <body>
     <div id="header">
         <a href="/">
@@ -21,12 +27,13 @@
             <img class="nav_img" src="{{url_for('static', filename='img/nav.png')}}" alt="그림">
             <div class="wrapper_btn1">
                 <button class="on" onclick="window.location.href='/program_setting'">초기 설정</button>
-                <button onclick="window.location.href='/program_run'">프로그램 실행</button>
+                <button id="runbtn" disabled="disabled" onclick="window.location.href='/program_run'">프로그램 실행</button>
             </div>
             <div class="wrapper_btn2 set">
                 <button class="btn_on">선택1</button>
                 <button class="btn_off">선택2</button>
                 <button class="btn_off">선택3</button>
+                <button class="btn_off" onclick='btnactive()'>완료</button> <!-- 누르면 프로그램 실행 버튼 활성화 -->
             </div>
         </div>
         <div class="main">
