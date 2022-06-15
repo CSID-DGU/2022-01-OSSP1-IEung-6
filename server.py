@@ -2,7 +2,7 @@
 # opencv web stream backend
 import os # folder & file 관리
 import sys
-from flask import Flask, render_template, Response, url_for, redirect, session
+from flask import Flask, render_template, Response, url_for, redirect, session, request
 import cv2
 from numpy import concatenate, double
 from gaze_tracking import GazeTracking
@@ -198,7 +198,7 @@ def video_show_set():
 @app.route('/video_show_run') # returns streaming response
 def video_show_run():
     return Response(gen_frames_run(), mimetype='multipart/x-mixed-replace; boundary=frame')
-'''
+
 @app.route('/calender', methods=['POST']) # calender로 보낼 정보(월별, 일별로 배열에 담아서..?)
 def tocalender():
     # txt 파일 목록 저장
@@ -244,39 +244,24 @@ def tocalender():
     
 @app.route('/daily')
 def todaily():
-    return render_template('daily.html')
-'''
-@app.route('/graph', methods=['POST'])
-def tograph():
-    mday = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-           -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-           -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1] # 집중도 일 별(31개)
-    mday_cnt = [0,0,0,0,0,0,0,0,0,0,
-           0,0,0,0,0,0,0,0,0,0,
-           0,0,0,0,0,0,0,0,0,0,0] # cnt 일 별
-    conavg = 0 # 평균 집중도
-    cntprogram = 0 # 실행 횟수
-    conbest = 0 # 집중도 best 날짜(일)
-    conworst = 100 # 집중도 worst 날짜(일)
-    conbest_day = None
-    conworst_day = None
-    m = session['current_time'] # session month
-    lastmonth = int(m) - 1 # 지난 달
-    lastmonth_concen = 0
-    lastmonth_cntprogram = 0
+    if request.args.get('data'):
+        data = request.args.get('data')
+        if len(data) == 1:
+            data = '0' + data
+    # txt 파일 목록 저장
     currentdir = os.getcwd()
     historydir = currentdir + "/history"
     file_list = os.listdir(historydir)
-    # test - 6월 1일 txt 파일 목록 저장
+    # test - 해당 날짜 txt 파일 목록 저장
     daily_file_list = list()
     for i in file_list:
-        if (i[5:7] == '06') and (i[8:10] == '01'): # hard coding 수정
+        if (i[5:7] == '06') and (i[8:10] == data): # hard coding 수정
             daily_file_list.append(i)
     # txt 파일로부터 집중도 읽어오기
     sum_cct = 0
     cct_list = list() # 집중도
     time_list = list() # 실행시간
-    date = '2022 06 01' # hard coding 수정
+    date = '2022 06 ' + data # hard coding 수정
     num = len(daily_file_list) # 파일 수
     for i in daily_file_list:
         with open(historydir + "/" + i,'r') as f:
@@ -307,6 +292,7 @@ def tograph():
         color = 'r'
     
     return render_template('daily.html', result_cct = result_cct, cct = cct_list, time = time_list, color = color, date = date, num = num)
+
 
 @app.route('/graph', methods=['POST'])
 def tograph():

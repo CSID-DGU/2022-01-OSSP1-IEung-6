@@ -38,31 +38,31 @@
                 {% endfor %}
                 {% for i in range(1, 5) %}
                 <td class={% if color_list[i] == 'g' %}'g'{% elif color_list[i] == 'y' %}'y'{% elif color_list[i] == 'r' %}'r'{% endif %} 
-                onclick={% if color_list[i] != '0' %}"window.location.href='/daily'"{% endif %}>{{ i }}</td>
+                onclick={% if color_list[i] != '0' %}"window.location.href='/daily?data={{ i }}'"{% endif %}>{{ i }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 {% for i in range(5, 12) %}
                 <td class={% if color_list[i] == 'g' %}'g'{% elif color_list[i] == 'y' %}'y'{% elif color_list[i] == 'r' %}'r'{% endif %} 
-                onclick={% if color_list[i] != '0' %}"window.location.href='/daily'"{% endif %}>{{ i }}</td>
+                onclick={% if color_list[i] != '0' %}"window.location.href='/daily?data={{ i }}'"{% endif %}>{{ i }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 {% for i in range(12, 19) %}
                 <td class={% if color_list[i] == 'g' %}'g'{% elif color_list[i] == 'y' %}'y'{% elif color_list[i] == 'r' %}'r'{% endif %} 
-                onclick={% if color_list[i] != '0' %}"window.location.href='/daily'"{% endif %}>{{ i }}</td>
+                onclick={% if color_list[i] != '0' %}"window.location.href='/daily?data={{ i }}'"{% endif %}>{{ i }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 {% for i in range(19, 26) %}
                 <td class={% if color_list[i] == 'g' %}'g'{% elif color_list[i] == 'y' %}'y'{% elif color_list[i] == 'r' %}'r'{% endif %} 
-                onclick={% if color_list[i] != '0' %}"window.location.href='/daily'"{% endif %}>{{ i }}</td>
+                onclick={% if color_list[i] != '0' %}"window.location.href='/daily?data={{ i }}'"{% endif %}>{{ i }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 {% for i in range(26, 31) %}
                 <td class={% if color_list[i] == 'g' %}'g'{% elif color_list[i] == 'y' %}'y'{% elif color_list[i] == 'r' %}'r'{% endif %} 
-                onclick={% if color_list[i] != '0' %}"window.location.href='/daily'"{% endif %}>{{ i }}</td>
+                onclick={% if color_list[i] != '0' %}"window.location.href='/daily?data={{ i }}'"{% endif %}>{{ i }}</td>
                 {% endfor %}
                 {% for i in range(2) %}
                 <td></td>
