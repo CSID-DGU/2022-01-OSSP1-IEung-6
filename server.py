@@ -104,6 +104,7 @@ def startcheck(tmp_concentrate_frame_cnt):
 def gen_frames_set(): # 프로그램 초기 설정
     global frame
     global webcam
+    global concentrate_frame_cnt
     webcam = cv2.VideoCapture(0)
     _, frame = webcam.read()
     schedule.every(0.08).seconds.do(repeated_by_second01_set, gaze) #약 0.1초에 1개씩 출력하도록 스케줄링 (보통 1초에 9~12개)
