@@ -261,38 +261,44 @@ def tograph():
     currentdir = os.getcwd()
     historydir = currentdir + "/history"
     file_list = os.listdir(historydir)
-    
+    # test - 6월 1일 txt 파일 목록 저장
+    daily_file_list = list()
     for i in file_list:
-        if i[5:7] == m: #지금 달
-            cntprogram+=1 # 실행 횟수 cnt
-            with open(historydir + "/" + i,'r') as f:
-                # 파일 읽기
-                lastline = f.readlines()[-1]
-                concen = int(float(lastline.split()[1]))
-                if concen > conbest:
-                    conbest = concen # 집중도 best
-                    conbest_day = i[8:10]
-                if concen < conworst:
-                    conworst = concen # 집중도 worst
-                    conworst_day = i[8:10]
-                conavg += concen
-                
-                day_index = int(i[8:10])
-                day_index-=1
-                mday[day_index]+=concen
-                mday_cnt[day_index]+=1 # 일 별 cnt +1
-        elif i[5:7] == lastmonth: # 지난 달
-            lastmonth_cntprogram+=1
-            with open(historydir + "/" + i,'r') as f:
-                # 파일 읽기
-                lastline = f.readlines()[-1]
-                concen = int(float(lastline.split()[1]))
-                lastmonth_concen += concen
-    conavg/=cntprogram # 평균 집중도
-    if lastmonth_cntprogram == 0: # 0으로 나눌 수 없으니까
-        lastmonth_concen = 0
+        if (i[5:7] == '06') and (i[8:10] == '01'): # hard coding 수정
+            daily_file_list.append(i)
+    # txt 파일로부터 집중도 읽어오기
+    sum_cct = 0
+    cct_list = list() # 집중도
+    time_list = list() # 실행시간
+    date = '2022 06 01' # hard coding 수정
+    num = len(daily_file_list) # 파일 수
+    for i in daily_file_list:
+        with open(historydir + "/" + i,'r') as f:
+            lastline = f.readlines()[-1]
+            # 실행 시간 계산
+            time_s = list()
+            time_f = list()
+            time_s.append(int(i[11:13])) # index 0 h
+            time_s.append(int(i[14:16])) # index 1 m
+            time_s.append(int(i[17:19])) # index 2 s
+            time_f.append(int(lastline[0:2])) # index 0 h
+            time_f.append(int(lastline[3:5])) # index 1 m
+            time_f.append(int(lastline[6:8]))  # index 2 s
+            start = time_s[0] * 60 * 60 + time_s[1] * 60 + time_s[2]
+            finish = time_f[0] * 60 * 60 + time_f[1] * 60 + time_f[2]
+            time = finish - start
+            time_list.append(time)
+            cct = round(float(lastline.split()[1]), 1) # 집중도
+            cct_list.append(cct)
+            sum_cct += cct
+    result_cct = sum_cct / num
+    # 집중도별 색상 지정
+    if result_cct >= 70:
+        color = 'g'
+    elif result_cct >= 30:
+        color = 'y'
     else:
-        lastmonth_concen/=lastmonth_cntprogram # 지난 달 평균 집중도
+        color = 'r'
     
     month_dif = conavg - lastmonth_concen
     # 일 별 그래프 저장(합친 거에 나누기 해서 일 별 평균 집중도)

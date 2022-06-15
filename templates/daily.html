@@ -17,38 +17,28 @@
     </div>
     <div id="navigation">
         <img class="left" src="{{url_for('static', filename='img/left.png')}}" alt="이전">
-        <div>5월 1일</div>
+        <div>{% if date[5] == '0' %}{{date[6]}}{% else %}{{ date[5:7] }}{% endif %}월 {% if date[8] == '0' %}{{date[9]}}{% else %}{{ date[8:10] }}{% endif %}일</div>
         <img class="right" src="{{url_for('static', filename='img/right.png')}}" alt="다음">
     </div>
     <button class="delete">Delete</button>
     <div id="content">
         <div class="reports">
             <form action="post">
+                {% for i in range(num) %}
                 <div>
                     <input type="checkbox">
                     <div class="box green">
-                        <span class="date">2022 05 01</span><span class="percent">80.0%</span><br>
-                        <span class="time">01h 08m 05s</span>
+                        <span class="date">{{ date }}</span><span class="percent">{{ cct[i] }}%</span><br>
+                        <span class="time">{% if (time[i] // 3600) < 10 %}0{{ time[i] // 3600 }}{% else %}{{ time[i] // 3600 }}{% endif %}h 
+                            {% if ((time[i] % 3600) // 60) < 10 %}0{{ (time[i] % 3600) // 60 }}{% else %}{{ (time[i] % 3600) // 60 }}{% endif %}m 
+                            {% if (time[i] % 60) < 10 %}0{{ time[i] % 60 }}{% else %}{{ time[i] % 60 }}{% endif %}s</span>
                     </div>
                 </div>
-                <div>
-                    <input type="checkbox">
-                    <div class="box yellow">
-                        <span class="date">2022 05 01</span><span class="percent">50.0%</span><br>
-                        <span class="time">01h 12m 30s</span>
-                    </div>
-                </div>
-                <div>
-                    <input type="checkbox">
-                    <div class="box red">
-                        <span class="date">2022 05 01</span><span class="percent">30.0%</span><br>
-                        <span class="time">01h 41m 57s</span>
-                    </div>
-                </div>
+                {% endfor %}
             </form>
         </div>
         <div class="text">
-            <span>오늘의 집중도는 <span>50.0%</span>로 <span class="colored">노란불</span>입니다</span>
+            <span>오늘의 집중도는 <span>{{ result_cct }}%</span>로 <span class={{ color }}>{% if color == 'g' %}초록불{% elif color == 'y' %}노란불{% else %}빨간불{% endif %}</span>입니다</span>
             <span>오늘의 집중도는 <span>14시 - 16시</span>에 <span>30%</span>로 가장 낮았습니다</span>
         </div>
     </div>
