@@ -68,13 +68,19 @@ def repeated_by_second01(gaze): # file write here
         tmp_concentrate_frame_cnt=1
         # ----------- write data
         data = now.strftime('%H:%M:%S.%f') + " c\n"
-        f.write(data)
+        try:
+            f.write(data)
+        except ValueError:
+            print("I/O operation on closed file---")
     else:
         print("Unconcentrated")
         tmp_concentrate_frame_cnt=0
         # ----------- write data
         data = now.strftime('%H:%M:%S.%f') + " u\n"
-        f.write(data)
+        try:
+            f.write(data)
+        except ValueError:
+            print("I/O operation on closed file---")
 
 def print_time():
     """
