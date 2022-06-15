@@ -273,10 +273,18 @@ def tocalender():
     
 @app.route('/daily')
 def todaily():
+    # 전송된 삭제 파일 및 날짜 저장
+    if request.args.getlist('delete'):
+        delete_list = request.args.getlist('delete')
+        for i in delete_list:
+            d_file = 'history/' + i
+            if os.path.isfile(d_file):
+                os.remove(d_file)
     if request.args.get('data'):
         data = request.args.get('data')
         if len(data) == 1:
             data = '0' + data
+    
     # txt 파일 목록 저장
     currentdir = os.getcwd()
     historydir = currentdir + "/history"
@@ -286,6 +294,7 @@ def todaily():
     for i in file_list:
         if (i[5:7] == '06') and (i[8:10] == data): # hard coding 수정
             daily_file_list.append(i)
+              
     # txt 파일로부터 집중도 읽어오기
     sum_cct = 0
     sum_time = 0
@@ -332,7 +341,7 @@ def todaily():
         color = 'r'
     
     return render_template('daily.html', result_cct = result_cct, cct = cct_list, time = time_list, color = color,
-                           date = date, num = num, w_cct = worst_cct, w_time = worst_time, w_log = worst_log)
+                           date = date, num = num, w_cct = worst_cct, w_time = worst_time, w_log = worst_log, d_list = daily_file_list)
 
 
 @app.route('/graph', methods=['POST'])
@@ -351,10 +360,17 @@ def tograph():
             prev.append(i)
     # 집중도 계산
     date_list = list()
-    sum_cct = 0
+    cct_list = list()
+    time_list = list()
+    best_list = list()
+    worst_list = list()
+    sum_time = 0
     sum_cct_prev = 0
+    result_cct = 0
     best_cct = 0
     worst_cct = 100
+    b_cct = 0.0
+    w_cct = 100.0
     best_date = ''
     worst_date = ''
     month = '6'
@@ -367,19 +383,52 @@ def tograph():
             date_list.append(i[0:10])
         elif temp != i[0:10]:
             date_list.append(i[0:10])
+            result_cct = round(result_cct / sum_time, 1)
+            cct_list.append(result_cct)
+            best_list.append(b_cct)
+            worst_list.append(w_cct)
+            b_cct = 0.0
+            w_cct = 100.0
+            time_list = list()
+            sum_time = 0
+            result_cct = 0
+            if best_cct < cct:
+                best_cct = cct
+                best_date = i[8:10]
+            if worst_cct > cct:
+                worst_cct = cct
+                worst_date = i[8:10]
         with open(historydir + "/" + i,'r') as f:
             lastline = f.readlines()[-1]
             cct = round(float(lastline.split()[1]), 1) # 집중도
-            sum_cct += cct
-        if best_cct < cct:
-            best_cct = cct
-            best_date = i[8:10]
-        if worst_cct > cct:
-            worst_cct = cct
-            worst_date = i[8:10]
+            if b_cct < cct:
+                b_cct = cct
+            if w_cct > cct:
+                w_cct = cct
+            time_s = list()
+            time_f = list()
+            time_s.append(int(i[11:13])) # index 0 h
+            time_s.append(int(i[14:16])) # index 1 m
+            time_s.append(int(i[17:19])) # index 2 s
+            time_f.append(int(lastline[0:2])) # index 0 h
+            time_f.append(int(lastline[3:5])) # index 1 m
+            time_f.append(int(lastline[6:8]))  # index 2 s
+            start = time_s[0] * 60 * 60 + time_s[1] * 60 + time_s[2]
+            finish = time_f[0] * 60 * 60 + time_f[1] * 60 + time_f[2]
+            time = finish - start
+            sum_time += time
+            time_list.append(time)
+            result_cct += time * cct
         temp = i[0:10]
-    result_cct = sum_cct / num
-    result_cct = round(result_cct, 1)
+    best_list.append(b_cct)
+    worst_list.append(w_cct)
+    result_cct = round(result_cct / sum_time, 1)
+    cct_list.append(result_cct)
+    result_cct = 0
+    for i in cct_list:
+        result_cct += i
+    result_cct = round(result_cct / len(cct_list), 1)
+    l = len(date_list)
     # 지난 달 집중도 계산
     for i in prev:
         with open(historydir + "/" + i,'r') as f:
@@ -394,7 +443,8 @@ def tograph():
     else:
         color = 'r'
     return render_template('graph.html', month = month, cct = result_cct, num = num, cct_b = best_cct, cct_w = worst_cct,
-                           date_b = best_date, date_w = worst_date, sub = sub_cct, color = color, date = date_list)
+                           date_b = best_date, date_w = worst_date, sub = sub_cct, color = color, date = date_list,
+                           cct_list = cct_list, l = l, b_cct = best_list, w_cct = worst_list)
 
 @app.route('/program_run')
 def torun():
