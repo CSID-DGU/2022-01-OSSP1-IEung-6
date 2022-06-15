@@ -38,7 +38,7 @@ def show_webcam(gaze, frame):
     cv2.putText(frame, "Left pupil:  " + str(left_pupil), (90, 140), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
     cv2.putText(frame, "Right pupil: " + str(right_pupil), (90, 185), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
 
-    cv2.imshow("Detect Concentration", frame)
+    # cv2.imshow("Detect Concentration", frame)
     return returnFrame
 
 def repeated_by_second01_set(gaze): # start check 용
@@ -138,7 +138,7 @@ def gen_frames_set(): # 프로그램 초기 설정
         if check30 == 30:
             break
     webcam.release()
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
 
 def gen_frames_run(): # 프로그램 실행 + 데이터 파일에 저장 (file name = date)
     currentdir = os.getcwd() # 현재 이 파일이 있는 디렉토리 (이 디렉토리의 history folder에 데이터 저장)
@@ -185,7 +185,7 @@ def gen_frames_run(): # 프로그램 실행 + 데이터 파일에 저장 (file n
         yield(b'--frame\r\n' 
               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
     webcam.release()
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
 
 @app.route('/') # localhost:5000
 def tomain():
@@ -198,7 +198,7 @@ def video_show_set():
 @app.route('/video_show_run') # returns streaming response
 def video_show_run():
     return Response(gen_frames_run(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
+'''
 @app.route('/calender', methods=['POST']) # calender로 보낼 정보(월별, 일별로 배열에 담아서..?)
 def tocalender():
     # txt 파일 목록 저장
@@ -241,10 +241,29 @@ def tocalender():
             color_list[int(calender_file_list[i])] = 'r'
     
     return render_template("calender.html", color_list = color_list)
-
+    
 @app.route('/daily')
 def todaily():
-    # txt 파일 목록 저장
+    return render_template('daily.html')
+'''
+@app.route('/graph', methods=['POST'])
+def tograph():
+    mday = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+           -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+           -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1] # 집중도 일 별(31개)
+    mday_cnt = [0,0,0,0,0,0,0,0,0,0,
+           0,0,0,0,0,0,0,0,0,0,
+           0,0,0,0,0,0,0,0,0,0,0] # cnt 일 별
+    conavg = 0 # 평균 집중도
+    cntprogram = 0 # 실행 횟수
+    conbest = 0 # 집중도 best 날짜(일)
+    conworst = 100 # 집중도 worst 날짜(일)
+    conbest_day = None
+    conworst_day = None
+    m = session['current_time'] # session month
+    lastmonth = int(m) - 1 # 지난 달
+    lastmonth_concen = 0
+    lastmonth_cntprogram = 0
     currentdir = os.getcwd()
     historydir = currentdir + "/history"
     file_list = os.listdir(historydir)
@@ -358,10 +377,6 @@ def torun():
 def tosetting():
     return render_template('program_setting.html')
 
-@app.route('/program_terminate')
-def toPterminate():
-    return render_template('program_terminate.html')
-
 @app.route('/terminate', methods=['POST'])
 def letterminate():
     global f
@@ -381,8 +396,12 @@ def letterminate():
     f.write(data)
     f.close()
     webcam.release()
-    cv2.destroyAllWindows()
-    return redirect(url_for('toPterminate')) 
+    #cv2.destroyAllWindows()
+    return render_template('program_terminate.html')
+
+@app.errorhandler(404) # error 404 페이지 커스텀
+def notfound_error(error):
+    return render_template('errorshow.html')
 
 if __name__ == "__main__": # start Flask server(5000번지)
     app.run(debug=True)
