@@ -46,6 +46,10 @@ input{
     transform: scale(1.5);
 }
 
+.none{
+    display: none;
+}
+
 .box{
     float: left;
     width: 300px;
