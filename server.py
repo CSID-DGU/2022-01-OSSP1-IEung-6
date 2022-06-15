@@ -201,40 +201,46 @@ def video_show_run():
 
 @app.route('/calender', methods=['POST']) # calender로 보낼 정보(월별, 일별로 배열에 담아서..?)
 def tocalender():
-    if 'month_now' not in session: # session의 정보 비었다면
-        current_time=datetime.datetime.now()
-        month=current_time.strftime('%m') # 문자열로 월 저장
-        session['current_time']=month # session에 지금 월 담음
-        print(session['current_time'])
-        
+    # txt 파일 목록 저장
     currentdir = os.getcwd()
     historydir = currentdir + "/history"
-    cnt = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-           -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-           -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1] # 집중도 cnt 31개
-    color=[] # r - red, y - yellow, g - green, n - none
     file_list = os.listdir(historydir)
+    # test - 6월 txt 파일 목록 저장
+    monthly_file_list = list()
     for i in file_list:
-        if i[5:7] == month: #지금 달
-            day=int(i[8:10])
-            day_index=day-1
-            with open(historydir + "/" + i,'r') as f:
-                # 파일 읽기
+        if (i[5:7] == '06'): # hard coding 수정
+            monthly_file_list.append(i)
+    # calender 존재 날짜 및 집중도 저장
+    calender_file_list = list()
+    cct_list = list()
+    for i in monthly_file_list:
+        with open(historydir + "/" + i,'r') as f:
                 lastline = f.readlines()[-1]
-                concen = int(float(lastline.split()[1]))
-                cnt[day_index-1]=cnt[day_index-1]+concen # cnt에 정확도 add
-                
-    for k in cnt:
-        if k == -1:
-            color.append('n')
-        elif k >= 0 and k < 30:
-            color.append('r')
-        elif k >= 30 and k < 70:
-            color.append('y')
-        elif k >= 70:
-            color.append('g')
+                cct = round(float(lastline.split()[1]), 1) # 집중도
+        if len(calender_file_list) == 0:
+            calender_file_list.append(i[8:10])
+            result_cct = cct
+            num = 1
+        else:
+            if (calender_file_list[-1]) != i[8:10]:
+                calender_file_list.append(i[8:10])
+                cct_list.append(result_cct / num)
+                result_cct = cct
+                num = 1
+            else:
+                result_cct += cct
+                num += 1
+    cct_list.append(result_cct / num) 
+    color_list = ['0' for i in range(32)]
+    for i in range(len(calender_file_list)):
+        if cct_list[i] >= 70:
+            color_list[int(calender_file_list[i])] = 'g'
+        elif cct_list[i] >= 30:
+            color_list[int(calender_file_list[i])] = 'y'
+        else:
+            color_list[int(calender_file_list[i])] = 'r'
     
-    return render_template("calender.html", color = color)
+    return render_template("calender.html", color_list = color_list)
 
 @app.route('/daily')
 def todaily():
@@ -283,7 +289,7 @@ def todaily():
     
     return render_template('daily.html', result_cct = result_cct, cct = cct_list, time = time_list, color = color, date = date, num = num)
 
-@app.route('/graph')
+@app.route('/graph', methods=['POST'])
 def tograph():
     # txt 파일 목록 저장
     currentdir = os.getcwd()
