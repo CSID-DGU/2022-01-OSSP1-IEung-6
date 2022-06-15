@@ -48,6 +48,10 @@
     line-height: 80px;
 }
 
-span > span{
+span > .r{
     color: #e5053a;
+}
+
+span > .b{
+    color: #2705e5;
 }

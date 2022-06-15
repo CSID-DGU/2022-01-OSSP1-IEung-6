@@ -113,8 +113,18 @@ input{
     background-color: #DEEBF7;
 }
 
-.colored{
+.y{
     color: #F9e814;
+    text-shadow: 2px 1.5px 2px #545454;
+}
+
+.r{
+    color: #EF2B2D;
+    text-shadow: 2px 1.5px 2px #545454;
+}
+
+.g{
+    color: #00B760;
     text-shadow: 2px 1.5px 2px #545454;
 }
 /*
