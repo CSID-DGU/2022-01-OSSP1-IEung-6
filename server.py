@@ -316,10 +316,6 @@ def torun():
 def tosetting():
     return render_template('program_setting.html')
 
-@app.route('/program_terminate')
-def toPterminate():
-    return render_template('program_terminate.html')
-
 @app.route('/terminate', methods=['POST'])
 def letterminate():
     global f
@@ -339,8 +335,12 @@ def letterminate():
     f.write(data)
     f.close()
     webcam.release()
-    cv2.destroyAllWindows()
-    return redirect(url_for('toPterminate')) 
+    #cv2.destroyAllWindows()
+    return render_template('program_terminate.html')
+
+@app.errorhandler(404) # error 404 페이지 커스텀
+def notfound_error(error):
+    return render_template('errorshow.html')
 
 if __name__ == "__main__": # start Flask server(5000번지)
     app.run(debug=True)
