@@ -2,22 +2,22 @@
 <html lang="ko">
 <head>
     <title>Error page</title>
-    <style>
-        hr{
-            border: solid 5px #5CEEE6;
-        }
-    </style>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/errorshow.css')}}">
 </head>
 <body>
     <center>
         <hr>
-        <h1>비정상적인 접근입니다!!</h1>
+        <hr class="t">
+        <br><br>
+        <img class="warn" src="{{url_for('static', filename='img/warn.png')}}" alt="주의"><br><br>
+        <div class="comment">비정상적인 접근입니다!!</div><br>
         <br>
         <a href="/">
             Main으로 돌아가기
         </a>
         <br>
-        <p>-- 공개SW프로젝트_01 팀 이응 --</p>
+        <h2 class="info"><- 공개SW프로젝트_01 팀 이응 -></h3><br><br>
+        <hr class="t">
         <hr>
     </center>
 </body>

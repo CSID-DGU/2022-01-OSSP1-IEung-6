@@ -298,7 +298,6 @@ def todaily():
     for i in file_list:
         if (i[5:7] == '06') and (i[8:10] == data): # hard coding 수정
             daily_file_list.append(i)
-              
     # txt 파일로부터 집중도 읽어오기
     sum_cct = 0
     sum_time = 0
