@@ -12,7 +12,9 @@
         <a href="/">
             <img class="logo" src="{{url_for('static', filename='img/logo.png')}}" alt="로고">
         </a>
-        <button onclick="window.location.href='/calender'">캘린더</button>
+        <form method="POST" action="/calender">
+            <button type="submit">캘린더</button> 
+        </form>
         <div></div>
     </div>
     <div id="navigation">
