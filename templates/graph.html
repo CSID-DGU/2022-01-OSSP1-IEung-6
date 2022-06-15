@@ -34,12 +34,12 @@
                 /* const exampledate='2022/05/01' 
                 이런식으로 categories안에 변수로도 데이터 넣을 수 있음!*/
                     categories: [
-                            '{% for i in date %} {{ i }}','{% endfor %}'
+                            '{% if l == 0 %}{% elif l >= 1 %}{{ date[0] }}{% endif %}{% for i in range(1,l) %}','{{ i }}{% endfor %}'
                     ],
                     series: [
                         {
                             name: 'Concentrate',
-                            data: [20, 40, 25, 50, 55, 45, 33, 34, 20, 67, 80, 13, 20, 40, 25, 50, 15, 45, 75, 47, 20, 30, 22, 13,20, 40, 25, 50, 15, 89, 33, 34, 20, 30, 22, 13 ],
+                            data: ['{% for i in cct_list %}{{ i }}','{% endfor %}'],
                         }
                     ],
                 };

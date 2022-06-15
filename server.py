@@ -332,8 +332,11 @@ def tograph():
             prev.append(i)
     # 집중도 계산
     date_list = list()
-    sum_cct = 0
+    cct_list = list()
+    time_list = list()
+    sum_time = 0
     sum_cct_prev = 0
+    result_cct = 0
     best_cct = 0
     worst_cct = 100
     best_date = ''
@@ -348,19 +351,42 @@ def tograph():
             date_list.append(i[0:10])
         elif temp != i[0:10]:
             date_list.append(i[0:10])
+            result_cct = round(result_cct / sum_time, 1)
+            cct_list.append(result_cct)
+            time_list = list()
+            sum_time = 0
+            result_cct = 0
+            if best_cct < cct:
+                best_cct = cct
+                best_date = i[8:10]
+            if worst_cct > cct:
+                worst_cct = cct
+                worst_date = i[8:10]
         with open(historydir + "/" + i,'r') as f:
             lastline = f.readlines()[-1]
             cct = round(float(lastline.split()[1]), 1) # 집중도
-            sum_cct += cct
-        if best_cct < cct:
-            best_cct = cct
-            best_date = i[8:10]
-        if worst_cct > cct:
-            worst_cct = cct
-            worst_date = i[8:10]
+            time_s = list()
+            time_f = list()
+            time_s.append(int(i[11:13])) # index 0 h
+            time_s.append(int(i[14:16])) # index 1 m
+            time_s.append(int(i[17:19])) # index 2 s
+            time_f.append(int(lastline[0:2])) # index 0 h
+            time_f.append(int(lastline[3:5])) # index 1 m
+            time_f.append(int(lastline[6:8]))  # index 2 s
+            start = time_s[0] * 60 * 60 + time_s[1] * 60 + time_s[2]
+            finish = time_f[0] * 60 * 60 + time_f[1] * 60 + time_f[2]
+            time = finish - start
+            sum_time += time
+            time_list.append(time)
+            result_cct += time * cct
         temp = i[0:10]
-    result_cct = sum_cct / num
-    result_cct = round(result_cct, 1)
+    result_cct = round(result_cct / sum_time, 1)
+    cct_list.append(result_cct)
+    result_cct = 0
+    for i in cct_list:
+        result_cct += i
+    result_cct = round(result_cct / len(cct_list), 1)
+    l = len(date_list)
     # 지난 달 집중도 계산
     for i in prev:
         with open(historydir + "/" + i,'r') as f:
@@ -375,7 +401,7 @@ def tograph():
     else:
         color = 'r'
     return render_template('graph.html', month = month, cct = result_cct, num = num, cct_b = best_cct, cct_w = worst_cct,
-                           date_b = best_date, date_w = worst_date, sub = sub_cct, color = color, date = date_list)
+                           date_b = best_date, date_w = worst_date, sub = sub_cct, color = color, date = date_list, cct_list = cct_list, l = l)
 
 @app.route('/program_run')
 def torun():
