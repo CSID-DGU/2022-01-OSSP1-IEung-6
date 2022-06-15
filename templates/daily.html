@@ -39,7 +39,8 @@
         </div>
         <div class="text">
             <span>오늘의 집중도는 <span>{{ result_cct }}%</span>로 <span class={{ color }}>{% if color == 'g' %}초록불{% elif color == 'y' %}노란불{% else %}빨간불{% endif %}</span>입니다</span>
-            <span>오늘의 집중도는 <span>14시 - 16시</span>에 <span>30%</span>로 가장 낮았습니다</span>
+            <span>오늘의 집중도는 <span>{{ w_log[0:2] }}시 {{ w_log[3:5] }}분 {{ w_log[6:8] }}초 ~ {{ w_time[0:2] }}시 {{ w_time[3:5] }}분 {{ w_time[6:8] }}초에 </span>
+            <span>{{ w_cct }}%</span>로 가장 낮았습니다</span>
         </div>
     </div>
 </body>

@@ -263,6 +263,7 @@ def todaily():
     cal_time = 0
     cct_list = list() # 집중도
     time_list = list() # 실행시간
+    worst_cct = 100
     date = '2022 06 ' + data # hard coding 수정
     num = len(daily_file_list) # 파일 수
     for i in daily_file_list:
@@ -283,8 +284,13 @@ def todaily():
             sum_time += time
             time_list.append(time)
             cct = round(float(lastline.split()[1]), 1) # 집중도
+            if cct < worst_cct:
+                worst_cct = cct
+                worst_time = lastline[0:8]
+                worst_log = i[11:19]
             cct_list.append(cct)
             sum_cct += cct
+    
     for i in range(len(cct_list)):
         cal_time += cct_list[i] * time_list[i]
     result_cct = round(cal_time / sum_time, 1)
@@ -296,7 +302,8 @@ def todaily():
     else:
         color = 'r'
     
-    return render_template('daily.html', result_cct = result_cct, cct = cct_list, time = time_list, color = color, date = date, num = num)
+    return render_template('daily.html', result_cct = result_cct, cct = cct_list, time = time_list, color = color,
+                           date = date, num = num, w_cct = worst_cct, w_time = worst_time, w_log = worst_log)
 
 
 @app.route('/graph', methods=['POST'])
