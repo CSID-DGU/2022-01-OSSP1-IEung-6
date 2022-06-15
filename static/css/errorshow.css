@@ -1,0 +1,25 @@
+hr{
+    border: solid 30px #99BADD;
+}
+
+.t{
+    border: solid 10px #5A5A5A;
+}
+
+img{
+    width: 400px;
+}
+
+.comment{
+    font-weight: 800;
+    font-size: 40px;
+}
+
+a{
+    font-size: 20px;
+}
+
+.info{
+    font-weight: 800;
+    font-size: 25px;
+}
