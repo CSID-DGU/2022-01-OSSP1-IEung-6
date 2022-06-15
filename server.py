@@ -38,7 +38,7 @@ def show_webcam(gaze, frame):
     cv2.putText(frame, "Left pupil:  " + str(left_pupil), (90, 140), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
     cv2.putText(frame, "Right pupil: " + str(right_pupil), (90, 185), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
 
-    cv2.imshow("Detect Concentration", frame)
+    # cv2.imshow("Detect Concentration", frame)
     return returnFrame
 
 def repeated_by_second01_set(gaze): # start check 용
@@ -138,7 +138,7 @@ def gen_frames_set(): # 프로그램 초기 설정
         if check30 == 30:
             break
     webcam.release()
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
 
 def gen_frames_run(): # 프로그램 실행 + 데이터 파일에 저장 (file name = date)
     currentdir = os.getcwd() # 현재 이 파일이 있는 디렉토리 (이 디렉토리의 history folder에 데이터 저장)
@@ -185,7 +185,7 @@ def gen_frames_run(): # 프로그램 실행 + 데이터 파일에 저장 (file n
         yield(b'--frame\r\n' 
               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
     webcam.release()
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
 
 @app.route('/') # localhost:5000
 def tomain():
@@ -198,7 +198,7 @@ def video_show_set():
 @app.route('/video_show_run') # returns streaming response
 def video_show_run():
     return Response(gen_frames_run(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
+'''
 @app.route('/calender', methods=['POST']) # calender로 보낼 정보(월별, 일별로 배열에 담아서..?)
 def tocalender():
     if 'month_now' not in session: # session의 정보 비었다면
@@ -235,10 +235,29 @@ def tocalender():
             color.append('g')
     
     return render_template("calender.html", color = color)
-
+'''
 @app.route('/daily')
 def todaily():
-    # txt 파일 목록 저장
+    return render_template('daily.html')
+'''
+@app.route('/graph', methods=['POST'])
+def tograph():
+    mday = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+           -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+           -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1] # 집중도 일 별(31개)
+    mday_cnt = [0,0,0,0,0,0,0,0,0,0,
+           0,0,0,0,0,0,0,0,0,0,
+           0,0,0,0,0,0,0,0,0,0,0] # cnt 일 별
+    conavg = 0 # 평균 집중도
+    cntprogram = 0 # 실행 횟수
+    conbest = 0 # 집중도 best 날짜(일)
+    conworst = 100 # 집중도 worst 날짜(일)
+    conbest_day = None
+    conworst_day = None
+    m = session['current_time'] # session month
+    lastmonth = int(m) - 1 # 지난 달
+    lastmonth_concen = 0
+    lastmonth_cntprogram = 0
     currentdir = os.getcwd()
     historydir = currentdir + "/history"
     file_list = os.listdir(historydir)
@@ -281,69 +300,14 @@ def todaily():
     else:
         color = 'r'
     
-    return render_template('daily.html', result_cct = result_cct, cct = cct_list, time = time_list, color = color, date = date, num = num)
-
-@app.route('/graph')
-def tograph():
-    # txt 파일 목록 저장
-    currentdir = os.getcwd()
-    historydir = currentdir + "/history"
-    file_list = os.listdir(historydir)
-    # test - 6월 txt 파일 목록 저장
-    monthly_file_list = list()
-    prev = list()
-    for i in file_list:
-        if (i[5:7] == '06'): # hard coding 수정
-            monthly_file_list.append(i)
-        if (i[5:7] == '05'): # hard coding 수정
-            prev.append(i)
-    # 집중도 계산
-    date_list = list()
-    sum_cct = 0
-    sum_cct_prev = 0
-    best_cct = 0
-    worst_cct = 100
-    best_date = ''
-    worst_date = ''
-    month = '6'
-    num = len(monthly_file_list)
-    num_prev = len(prev)
-    # 이번 달 집중도 계산
-    temp = ''
-    for i in monthly_file_list:
-        if temp == '':
-            date_list.append(i[0:10])
-        elif temp != i[0:10]:
-            date_list.append(i[0:10])
-        with open(historydir + "/" + i,'r') as f:
-            lastline = f.readlines()[-1]
-            cct = round(float(lastline.split()[1]), 1) # 집중도
-            sum_cct += cct
-        if best_cct < cct:
-            best_cct = cct
-            best_date = i[8:10]
-        if worst_cct > cct:
-            worst_cct = cct
-            worst_date = i[8:10]
-        temp = i[0:10]
-    result_cct = sum_cct / num
-    result_cct = round(result_cct, 1)
-    # 지난 달 집중도 계산
-    for i in prev:
-        with open(historydir + "/" + i,'r') as f:
-            lastline = f.readlines()[-1]
-            cct = round(float(lastline.split()[1]), 1) # 집중도
-            sum_cct_prev += cct
-    prev_cct = sum_cct_prev / num_prev
-    prev_cct = round(prev_cct, 1)
-    sub_cct = result_cct - prev_cct
-    if sub_cct < 0:
-        color = 'b'
-    else:
-        color = 'r'
-    return render_template('graph.html', month = month, cct = result_cct, num = num, cct_b = best_cct, cct_w = worst_cct,
-                           date_b = best_date, date_w = worst_date, sub = sub_cct, color = color, date = date_list)
-
+    month_dif = conavg - lastmonth_concen
+    # 일 별 그래프 저장(합친 거에 나누기 해서 일 별 평균 집중도)
+    for n in range(len(mday_cnt)):
+        if mday_cnt[n] != 0:
+            mday[n]/=mday_cnt[n]
+             
+    return render_template('graph.html', mday=mday, conavg=conavg, cntprogram=cntprogram, conbest_day=conbest_day, conworst_day=conworst_day, month_dif=month_dif, )
+'''
 @app.route('/program_run')
 def torun():
     return render_template('program_run.html')
