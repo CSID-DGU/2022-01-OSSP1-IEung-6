@@ -287,8 +287,11 @@ def todaily():
             daily_file_list.append(i)
     # txt 파일로부터 집중도 읽어오기
     sum_cct = 0
+    sum_time = 0
+    cal_time = 0
     cct_list = list() # 집중도
     time_list = list() # 실행시간
+    worst_cct = 100
     date = '2022 06 ' + data # hard coding 수정
     num = len(daily_file_list) # 파일 수
     for i in daily_file_list:
@@ -306,11 +309,19 @@ def todaily():
             start = time_s[0] * 60 * 60 + time_s[1] * 60 + time_s[2]
             finish = time_f[0] * 60 * 60 + time_f[1] * 60 + time_f[2]
             time = finish - start
+            sum_time += time
             time_list.append(time)
             cct = round(float(lastline.split()[1]), 1) # 집중도
+            if cct < worst_cct:
+                worst_cct = cct
+                worst_time = lastline[0:8]
+                worst_log = i[11:19]
             cct_list.append(cct)
             sum_cct += cct
-    result_cct = sum_cct / num
+    
+    for i in range(len(cct_list)):
+        cal_time += cct_list[i] * time_list[i]
+    result_cct = round(cal_time / sum_time, 1)
     # 집중도별 색상 지정
     if result_cct >= 70:
         color = 'g'
@@ -319,7 +330,8 @@ def todaily():
     else:
         color = 'r'
     
-    return render_template('daily.html', result_cct = result_cct, cct = cct_list, time = time_list, color = color, date = date, num = num)
+    return render_template('daily.html', result_cct = result_cct, cct = cct_list, time = time_list, color = color,
+                           date = date, num = num, w_cct = worst_cct, w_time = worst_time, w_log = worst_log)
 
 
 @app.route('/graph', methods=['POST'])

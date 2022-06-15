@@ -1,3 +1,5 @@
+var d = new Date()
+d = d.getDate()
 $(function () {
     setTimeout(() => {
         $(".text").fadeOut(0.05);
@@ -6,7 +8,7 @@ $(function () {
         $(".loader").fadeOut();
         var create_btn = '<button class="btn_new" style="display:none;" onclick="">오늘의 레포트</button>\n'
         $(".create_btn").html(create_btn);
-        $(".create_btn").attr('onclick',"window.location.href='/daily'");
+        $(".create_btn").attr('onclick',`window.location.href='/daily?data=${d}'`);
         $(".btn_new").fadeIn(1000);
     }, 5000);
 });
