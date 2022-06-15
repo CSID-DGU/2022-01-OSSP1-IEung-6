@@ -244,10 +244,19 @@ def tocalender():
     
 @app.route('/daily')
 def todaily():
+    # 전송된 삭제 파일 및 날짜 저장
+    if request.args.getlist('delete'):
+        delete_list = request.args.getlist('delete')
+        for i in delete_list:
+            d_file = 'history/' + i
+            if os.path.isfile(d_file):
+                os.remove(d_file)
     if request.args.get('data'):
         data = request.args.get('data')
         if len(data) == 1:
             data = '0' + data
+    
+    
     # txt 파일 목록 저장
     currentdir = os.getcwd()
     historydir = currentdir + "/history"
@@ -257,6 +266,7 @@ def todaily():
     for i in file_list:
         if (i[5:7] == '06') and (i[8:10] == data): # hard coding 수정
             daily_file_list.append(i)
+              
     # txt 파일로부터 집중도 읽어오기
     sum_cct = 0
     sum_time = 0
@@ -303,7 +313,7 @@ def todaily():
         color = 'r'
     
     return render_template('daily.html', result_cct = result_cct, cct = cct_list, time = time_list, color = color,
-                           date = date, num = num, w_cct = worst_cct, w_time = worst_time, w_log = worst_log)
+                           date = date, num = num, w_cct = worst_cct, w_time = worst_time, w_log = worst_log, d_list = daily_file_list)
 
 
 @app.route('/graph', methods=['POST'])
