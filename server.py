@@ -68,13 +68,19 @@ def repeated_by_second01(gaze): # file write here
         tmp_concentrate_frame_cnt=1
         # ----------- write data
         data = now.strftime('%H:%M:%S.%f') + " c\n"
-        f.write(data)
+        try:
+            f.write(data)
+        except ValueError:
+            print("I/O operation on closed file---")
     else:
         print("Unconcentrated")
         tmp_concentrate_frame_cnt=0
         # ----------- write data
         data = now.strftime('%H:%M:%S.%f') + " u\n"
-        f.write(data)
+        try:
+            f.write(data)
+        except ValueError:
+            print("I/O operation on closed file---")
 
 def print_time():
     """
@@ -108,7 +114,18 @@ def gen_frames_set(): # 프로그램 초기 설정
     global check_sum # sum이 30 되면 초기 설정 완료 
     check_sum = 0
     while True:
-        frame = show_webcam(gaze, frame)
+        #frame = show_webcam(gaze, frame)
+        _, frame = webcam.read()
+        gaze.refresh(frame)
+        frame = gaze.annotated_frame()
+        if gaze.is_center():
+            text = "Concentrate"
+        # 만약 중앙으로 보는 것으로 인식했다면 결과 stdout에 print and release   
+            sys.stdout.flush()
+        else:
+            text="Unconcentrate"
+        cv2.putText(frame, text, (520, 470), cv2.FONT_HERSHEY_DUPLEX, 0.7, (147, 58, 31), 2)
+        # -----------
         schedule.run_pending() #위에서 스케줄링 한 시간마다 수행
         frame_cnt+=1 # 위 함수 수행할 때마다 프레임증가
         concentrate_frame_cnt+=tmp_concentrate_frame_cnt #global 변수로 선언한 집중 프레임수 더하기
@@ -118,7 +135,7 @@ def gen_frames_set(): # 프로그램 초기 설정
         if check30 == 30: # 초기 설정 완료 -> 화면에 완료 표시 하기
             font = cv2.FONT_HERSHEY_SIMPLEX
             puttxt = "Done Setting !!"
-            cv2.putText(frame, puttxt,(60, 250),font, 2, (255, 0, 0), 3)
+            cv2.putText(frame, puttxt,(70, 60),font, 2, (255, 0, 0), 3)
         
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print("종료시간 : ", end="")
@@ -159,7 +176,18 @@ def gen_frames_run(): # 프로그램 실행 + 데이터 파일에 저장 (file n
     frame_cnt=0
     concentrate_frame_cnt=0
     while True:
-        frame = show_webcam(gaze, frame)
+        #frame = show_webcam(gaze, frame)
+        _, frame = webcam.read()
+        gaze.refresh(frame)
+        frame = gaze.annotated_frame()
+        if gaze.is_center():
+            text = "Concentrate"
+        # 만약 중앙으로 보는 것으로 인식했다면 결과 stdout에 print and release   
+            sys.stdout.flush()
+        else:
+            text="Unconcentrate"
+        cv2.putText(frame, text, (520, 470), cv2.FONT_HERSHEY_DUPLEX, 0.7, (147, 58, 31), 2)
+        # -----------
         schedule.run_pending() #위에서 스케줄링 한 시간마다 수행
         frame_cnt+=1 # 위 함수 수행할 때마다 프레임증가
         concentrate_frame_cnt+=tmp_concentrate_frame_cnt #global 변수로 선언한 집중 프레임수 더하기
