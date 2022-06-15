@@ -18,9 +18,7 @@
         <div></div>
     </div>
     <div id="navigation">
-        <img class="left" src="{{url_for('static', filename='img/left.png')}}" alt="이전">
         <div>{% if date[5] == '0' %}{{date[6]}}{% else %}{{ date[5:7] }}{% endif %}월 {% if date[8] == '0' %}{{date[9]}}{% else %}{{ date[8:10] }}{% endif %}일</div>
-        <img class="right" src="{{url_for('static', filename='img/right.png')}}" alt="다음">
     </div>
     <button class="delete">Delete</button>
     <div id="content">
@@ -29,7 +27,7 @@
                 {% for i in range(num) %}
                 <div>
                     <input type="checkbox">
-                    <div class="box green">
+                    <div class="box {% if cct[i] >= 70 %}green{% elif cct[i] >= 30 %}yellow{% else %}red{% endif %}">
                         <span class="date">{{ date }}</span><span class="percent">{{ cct[i] }}%</span><br>
                         <span class="time">{% if (time[i] // 3600) < 10 %}0{{ time[i] // 3600 }}{% else %}{{ time[i] // 3600 }}{% endif %}h 
                             {% if ((time[i] % 3600) // 60) < 10 %}0{{ (time[i] % 3600) // 60 }}{% else %}{{ (time[i] % 3600) // 60 }}{% endif %}m 
