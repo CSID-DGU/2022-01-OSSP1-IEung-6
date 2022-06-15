@@ -256,7 +256,6 @@ def todaily():
         if len(data) == 1:
             data = '0' + data
     
-    
     # txt 파일 목록 저장
     currentdir = os.getcwd()
     historydir = currentdir + "/history"
@@ -334,11 +333,15 @@ def tograph():
     date_list = list()
     cct_list = list()
     time_list = list()
+    best_list = list()
+    worst_list = list()
     sum_time = 0
     sum_cct_prev = 0
     result_cct = 0
     best_cct = 0
     worst_cct = 100
+    b_cct = 0.0
+    w_cct = 100.0
     best_date = ''
     worst_date = ''
     month = '6'
@@ -353,6 +356,10 @@ def tograph():
             date_list.append(i[0:10])
             result_cct = round(result_cct / sum_time, 1)
             cct_list.append(result_cct)
+            best_list.append(b_cct)
+            worst_list.append(w_cct)
+            b_cct = 0.0
+            w_cct = 100.0
             time_list = list()
             sum_time = 0
             result_cct = 0
@@ -365,6 +372,10 @@ def tograph():
         with open(historydir + "/" + i,'r') as f:
             lastline = f.readlines()[-1]
             cct = round(float(lastline.split()[1]), 1) # 집중도
+            if b_cct < cct:
+                b_cct = cct
+            if w_cct > cct:
+                w_cct = cct
             time_s = list()
             time_f = list()
             time_s.append(int(i[11:13])) # index 0 h
@@ -380,6 +391,8 @@ def tograph():
             time_list.append(time)
             result_cct += time * cct
         temp = i[0:10]
+    best_list.append(b_cct)
+    worst_list.append(w_cct)
     result_cct = round(result_cct / sum_time, 1)
     cct_list.append(result_cct)
     result_cct = 0
@@ -401,7 +414,8 @@ def tograph():
     else:
         color = 'r'
     return render_template('graph.html', month = month, cct = result_cct, num = num, cct_b = best_cct, cct_w = worst_cct,
-                           date_b = best_date, date_w = worst_date, sub = sub_cct, color = color, date = date_list, cct_list = cct_list, l = l)
+                           date_b = best_date, date_w = worst_date, sub = sub_cct, color = color, date = date_list,
+                           cct_list = cct_list, l = l, b_cct = best_list, w_cct = worst_list)
 
 @app.route('/program_run')
 def torun():

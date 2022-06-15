@@ -38,9 +38,17 @@
                     ],
                     series: [
                         {
-                            name: 'Concentrate',
+                            name: 'Average Concentrate',
                             data: ['{% for i in cct_list %}{{ i }}','{% endfor %}'],
-                        }
+                        },
+                        {
+                            name: 'Best Concentrate',
+                            data: ['{% for i in b_cct %}{{ i }}','{% endfor %}'],
+                        },
+                        {
+                            name: 'Worst Concentrate',
+                            data: ['{% for i in w_cct %}{{ i }}','{% endfor %}'],
+                        },
                     ],
                 };
 
