@@ -112,6 +112,7 @@ def gen_frames_set(): # 프로그램 초기 설정
     print_time()
     frame_cnt=0
     concentrate_frame_cnt=0
+    tmp_concentrate_frame_cnt=0
     global check_sum # sum이 30 되면 초기 설정 완료 
     check_sum = 0
     while True:
@@ -174,6 +175,7 @@ def gen_frames_run(): # 프로그램 실행 + 데이터 파일에 저장 (file n
     print_time()
     global frame_cnt
     global concentrate_frame_cnt
+    tmp_concentrate_frame_cnt=0
     frame_cnt=0
     concentrate_frame_cnt=0
     while True:
