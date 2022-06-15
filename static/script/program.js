@@ -30,11 +30,4 @@ $(function(){
 			$(".wrapper_frame > img:nth-child(2)").show();
 		}
 	);
-
-	$(".set > button:nth-child(3)").click(
-		function () {
-			$(".wrapper_frame > img:nth-child(n)").hide();
-			$(".wrapper_frame > img:nth-child(3)").show();
-		}
-    );
 });
