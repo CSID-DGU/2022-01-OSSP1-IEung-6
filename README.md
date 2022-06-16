@@ -22,6 +22,7 @@ webcam을 통해 사용자의 집중을 판별하고 집중도 데이터를 시�
 - opencv-contrib-python 4.5.5.64
 - opencv-python 4.5.5.64
 - schedule 1.1.0
+- Flask 2.1.2
 
 ## 프로그램 흐름도
 
