@@ -294,57 +294,97 @@ def todaily():
     historydir = currentdir + "/history"
     file_list = os.listdir(historydir)
     # test - 해당 날짜 txt 파일 목록 저장
+    
     daily_file_list = list()
     for i in file_list:
         if (i[5:7] == '06') and (i[8:10] == data): # hard coding 수정
             daily_file_list.append(i)
-    # txt 파일로부터 집중도 읽어오기
-    sum_cct = 0
-    sum_time = 0
-    cal_time = 0
-    cct_list = list() # 집중도
-    time_list = list() # 실행시간
-    worst_cct = 100
-    date = '2022 06 ' + data # hard coding 수정
-    num = len(daily_file_list) # 파일 수
-    for i in daily_file_list:
-        with open(historydir + "/" + i,'r') as f:
-            lastline = f.readlines()[-1]
-            # 실행 시간 계산
-            time_s = list()
-            time_f = list()
-            time_s.append(int(i[11:13])) # index 0 h
-            time_s.append(int(i[14:16])) # index 1 m
-            time_s.append(int(i[17:19])) # index 2 s
-            time_f.append(int(lastline[0:2])) # index 0 h
-            time_f.append(int(lastline[3:5])) # index 1 m
-            time_f.append(int(lastline[6:8]))  # index 2 s
-            start = time_s[0] * 60 * 60 + time_s[1] * 60 + time_s[2]
-            finish = time_f[0] * 60 * 60 + time_f[1] * 60 + time_f[2]
-            time = finish - start
-            sum_time += time
-            time_list.append(time)
-            cct = round(float(lastline.split()[1]), 1) # 집중도
-            if cct < worst_cct:
-                worst_cct = cct
-                worst_time = lastline[0:8]
-                worst_log = i[11:19]
-            cct_list.append(cct)
-            sum_cct += cct
-    
-    for i in range(len(cct_list)):
-        cal_time += cct_list[i] * time_list[i]
-    result_cct = round(cal_time / sum_time, 1)
-    # 집중도별 색상 지정
-    if result_cct >= 70:
-        color = 'g'
-    elif result_cct >= 30:
-        color = 'y'
+    if daily_file_list:
+        # txt 파일로부터 집중도 읽어오기
+        sum_cct = 0
+        sum_time = 0
+        cal_time = 0
+        cct_list = list() # 집중도
+        time_list = list() # 실행시간
+        worst_cct = 100
+        date = '2022 06 ' + data # hard coding 수정
+        num = len(daily_file_list) # 파일 수
+        for i in daily_file_list:
+            with open(historydir + "/" + i,'r') as f:
+                lastline = f.readlines()[-1]
+                # 실행 시간 계산
+                time_s = list()
+                time_f = list()
+                time_s.append(int(i[11:13])) # index 0 h
+                time_s.append(int(i[14:16])) # index 1 m
+                time_s.append(int(i[17:19])) # index 2 s
+                time_f.append(int(lastline[0:2])) # index 0 h
+                time_f.append(int(lastline[3:5])) # index 1 m
+                time_f.append(int(lastline[6:8]))  # index 2 s
+                start = time_s[0] * 60 * 60 + time_s[1] * 60 + time_s[2]
+                finish = time_f[0] * 60 * 60 + time_f[1] * 60 + time_f[2]
+                time = finish - start
+                sum_time += time
+                time_list.append(time)
+                cct = round(float(lastline.split()[1]), 1) # 집중도
+                if cct < worst_cct:
+                    worst_cct = cct
+                    worst_time = lastline[0:8]
+                    worst_log = i[11:19]
+                cct_list.append(cct)
+                sum_cct += cct
+        
+        for i in range(len(cct_list)):
+            cal_time += cct_list[i] * time_list[i]
+        result_cct = round(cal_time / sum_time, 1)
+        # 집중도별 색상 지정
+        if result_cct >= 70:
+            color = 'g'
+        elif result_cct >= 30:
+            color = 'y'
+        else:
+            color = 'r'
+        
+        return render_template('daily.html', result_cct = result_cct, cct = cct_list, time = time_list, color = color,
+                            date = date, num = num, w_cct = worst_cct, w_time = worst_time, w_log = worst_log, d_list = daily_file_list)
     else:
-        color = 'r'
-    
-    return render_template('daily.html', result_cct = result_cct, cct = cct_list, time = time_list, color = color,
-                           date = date, num = num, w_cct = worst_cct, w_time = worst_time, w_log = worst_log, d_list = daily_file_list)
+        
+        # test - 6월 txt 파일 목록 저장
+        monthly_file_list = list()
+        for i in file_list:
+            if (i[5:7] == '06'): # hard coding 수정
+                monthly_file_list.append(i)
+        # calender 존재 날짜 및 집중도 저장
+        calender_file_list = list()
+        cct_list = list()
+        for i in monthly_file_list:
+            with open(historydir + "/" + i,'r') as f:
+                    lastline = f.readlines()[-1]
+                    cct = round(float(lastline.split()[1]), 1) # 집중도
+            if len(calender_file_list) == 0:
+                calender_file_list.append(i[8:10])
+                result_cct = cct
+                num = 1
+            else:
+                if (calender_file_list[-1]) != i[8:10]:
+                    calender_file_list.append(i[8:10])
+                    cct_list.append(result_cct / num)
+                    result_cct = cct
+                    num = 1
+                else:
+                    result_cct += cct
+                    num += 1
+        cct_list.append(result_cct / num) 
+        color_list = ['0' for i in range(32)]
+        for i in range(len(calender_file_list)):
+            if cct_list[i] >= 70:
+                color_list[int(calender_file_list[i])] = 'g'
+            elif cct_list[i] >= 30:
+                color_list[int(calender_file_list[i])] = 'y'
+            else:
+                color_list[int(calender_file_list[i])] = 'r'
+        
+        return render_template('calender.html', color_list = color_list)
 
 
 @app.route('/graph', methods=['POST'])
