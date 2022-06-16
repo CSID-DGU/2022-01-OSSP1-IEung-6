@@ -30,9 +30,9 @@ webcam을 통해 사용자의 집중을 판별하고 집중도 데이터를 시�
 
 
 ## 프로젝트 기능
--초기설정의 가이드라인
--데일리 레포트에서 개별레포트 delete 기능
--월별 그래프의 area chart (gif로 줌인/줌아웃 기능 보여주기)
+- 초기설정의 가이드라인
+- 데일리 레포트에서 개별레포트 delete 기능
+- 월별 그래프의 area chart (gif로 줌인/줌아웃 기능 보여주기)
 ## 프로젝트 실행방법
 #### 1. 메인 프로젝트 설치
 <pre><code>$ git clone https://github.com/CSID-DGU/2022-01-OSSP1-IEung-6.git
